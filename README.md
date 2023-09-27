@@ -5,6 +5,8 @@ Personal guide to installing and setting up a Linux laptop
 ## System Settings
 TODO
 
+### Execute system setup scripts
+TODO
 
 ## User Settings
 ### Desktop / KDE Settings
@@ -44,6 +46,17 @@ TODO
   Right-click on Desktop: Arbeitsfläche und Hintergrund einrichten...  
   Select „Zu dunkler Stunde“
 
+- Taskbar / Symbolleiste
+  - Settings / Systemeinstellungen
+  - Discover
+  - Dolphin (Filemanager)
+  - Firefox
+  - Konsole
+  - Visual Studio Code
+
+- Switch off Bluetooth
+
+
 
 ### Customize Firefox
 - Show menues by right-click on Tabs --> X Menüleiste
@@ -60,6 +73,40 @@ TODO
         - X Die Chronik löschen, wenn Firefox geschlossen wird  
           `Einstellungen` --> Tick all (X)
 
+
+### Execute user setup scripts
+TODO
+
+
+### Enable sound for su-users
+Multi-User audio sharing work on Pipewire:  
+See: [How does Multi-User audio sharing work on Pipewire?](https://www.reddit.com/r/archlinux/comments/s3zn00/how_does_multiuser_audio_sharing_work_on_pipewire/?rdt=57318)  
+and: [Migrate PulseAudio --> `module-native-protocol-tcp`](https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Migrate-PulseAudio#module-native-protocol-tcp)
+
+```
+mkdir -p $HOME/.config/pipewire/
+cp -i /usr/share/pipewire/pipewire-pulse.conf $HOME/.config/pipewire/pipewire-pulse.conf
+```
+Modify section `libpipewire-module-protocol-pulse` of file `$HOME/.config/pipewire/pipewire-pulse.conf`:
+```
+vi $HOME/.config/pipewire/pipewire-pulse.conf
+```
+```
+    { name = libpipewire-module-protocol-pulse
+        args = {
+            server.address = [
+                "unix:native"
+                "tcp:4713"
+            ]
+        }
+    }
+```
+Check it:
+```
+export SU_USER=www
+pactl load-module module-native-protocol-tcp
+xhost si:localuser:$SU_USER && sudo -u $SU_USER sh -c "PULSE_SERVER='tcp:127.0.0.1:4713' firefox "$@""
+```
 
 ### Customize Visual Code
 - Help --> Welcome
