@@ -57,7 +57,7 @@ See [Unlocking Encrypted Home Partition on Login](https://www.doof.me.uk/2019/09
   ```
   sudo apt install -y libpam-mount
   ```
-- Add `luks,discard,noauto` to the options of `/etc/crypttab`
+- Update `/etc/crypttab` to use options `luks,discard,noauto` for the encrypted `/home`
   ```
   crypt_home   UUID=b3d517b3-6db0-4210-9c0a-44f0401cc729   none   luks,discard,noauto
   ``` 
@@ -123,6 +123,7 @@ sudo chmod 750 /home/data/
 sudo ln -s /home/data /data
 ```
 TODO: define subfolder structure
+
 
 
 
@@ -292,3 +293,59 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   git commit -m "message"
   git push
   ```
+
+
+
+
+---
+---
+## HowTos, infos and command examples
+- Mount NAS
+  ```
+  sudo mount -t cifs //192.168.2.5/test /mnt/lanas01_test -o username=test,uid=$(id -u),gid=$(id -g)
+  ```
+  
+- List partitions
+  ```
+  lsblk -o name,mountpoint,label,size,uuid
+  ```
+
+- Copy folder recursively using `rsync`
+  ```
+  time rsync -avP --delete source_path/ destination-path/
+  #      with P = --partial --progress 
+  ```
+
+- Direct root login at commandline
+  - Enable: 
+    ```
+    sudo -i passwd root
+    ```
+  - Disable:
+    ```
+    sudo -i passwd -dl root
+    ```
+
+- Rename username
+  - Change username from `data` to `install`
+    ```
+    usermod -l install data
+    ```
+  - Change groupname from `data` to `install`
+    ```
+    groupmod -n install data
+    ```
+  - Change homedir
+    ```
+    usermod -d /home/install -m install
+    ```
+
+- Find and replace special chars in txt-file  
+  TODO
+
+
+### Infos
+- Access BIOS and boot menu
+  - BIOS: F2 or (ESC)
+  - Boot menu: F7 or (Entf)
+- Info for `gparted`: 1 GB = 953.6743 MiB
