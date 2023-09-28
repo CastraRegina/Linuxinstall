@@ -8,6 +8,126 @@ TODO
 ### Execute system setup scripts
 TODO
 
+
+
+### Encrypt /home and pertinent encryption settings
+#### Encrypt /home
+See [Encrypting the Home Partition on an Existing Linux Installation](https://techblog.dev/posts/2022/03/encrypting-the-home-partition-on-an-existing-linux-installation/)  
+and [What is the recommended method to encrypt the home directory in Ubuntu 21.04?](https://askubuntu.com/questions/1335006/what-is-the-recommended-method-to-encrypt-the-home-directory-in-ubuntu-21-04)  
+
+Steps:
+```
+sudo apt install -y libpam-mount
+cryptsetup benchmark    # to check for best performance (usually standard)
+lsblk   # or 'sudo fdisk -l'  to get a list of partitions
+
+export NEW_HOME_PARTITION=/dev/nvme0n1p4   # check CAREFULLY!!!
+sudo umount $NEW_HOME_PARTITION
+sudo cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 -v luksFormat $NEW_HOME_PARTITION    # use same password as at login
+
+sudo umount $NEW_HOME_PARTITION
+sudo cryptsetup -v luksOpen $NEW_HOME_PARTITION crypt_home
+sudo mkfs -t ext4 -L crypt_home /dev/mapper/crypt_home
+sudo lsblk -f /dev/mapper/crypt_home
+
+sudo cryptsetup luksUUID $NEW_HOME_PARTITION
+export NEW_PARTITION_UUID=$(sudo cryptsetup luksUUID $NEW_HOME_PARTITION)
+echo $NEW_PARTITION_UUID    # check if uuid is retrieved
+
+echo "luks-$NEW_PARTITION_UUID   UUID=$NEW_PARTITION_UUID   none   luks,discard,noauto" | sudo tee -a /etc/crypttab
+```
+Logout completely and login as *pure root*:
+```
+# as pure root do:
+export NEW_HOME_PARTITION=/dev/nvme0n1p4
+sudo cryptsetup -v luksOpen $NEW_HOME_PARTITION crypt_home
+sudo mkdir -p /mnt/crypt_home
+sudo mount /dev/mapper/crypt_home /mnt/crypt_home
+sudo rsync -avP /home/ /mnt/crypt_home/
+### sudo rsync -avP /home/.[^.]* /mnt/crypt_home/    # not used
+sudo mv -i /home /home_old
+sudo mkdir /home
+sudo umount /mnt/crypt_home
+sudo mount /dev/mapper/crypt_home /home
+```
+
+#### Unlock /home at login automatically
+See [Unlocking Encrypted Home Partition on Login](https://www.doof.me.uk/2019/09/22/unlocking-encrypted-home-partition-on-login/)
+- For auto-mount at login install package `libpam-mount`
+  ```
+  sudo apt install -y libpam-mount
+  ```
+- Add `luks,discard,noauto` to the options of `/etc/crypttab`
+  ```
+  crypt_home   UUID=b3d517b3-6db0-4210-9c0a-44f0401cc729   none   luks,discard,noauto
+  ``` 
+- Get `partuuid` of encrypted partition
+  ```
+  sudo blkid $NEW_HOME_PARTITION
+  ```
+- Take the `partuuid` and use the path link, e.g.
+  ```
+  /dev/disk/by-partuuid/f0fe94b8-f61a-4433-ac1b-b3abfe530088
+  ```
+- Modify `/etc/security/pam_mount.conf.xml`, e.g. for user `install`
+  ```
+  <volume user="install" fstype="crypt" path="/dev/disk/by-partuuid/f0fe94b8-f61a-4433-ac1b-b3abfe530088" mountpoint="crypt_home" />
+  <volume user="install" fstype="auto" path="/dev/mapper/crypt_home" mountpoint="/home" options="defaults,relatime,discard" />
+  <cryptmount>cryptsetup open --allow-discards %(VOLUME) %(MNTPT)</cryptmount>
+  <cryptumount>cryptsetup close %(MNTPT)</cryptumount>
+  ```
+
+
+### Create user accounts
+- User ids and names
+  - 1000 - install
+  - 1001 - www
+    ```
+    useradd -m -s /bin/bash -G cdrom,audio,dip,plugdev,netdev,bluetooth,lpadmin www
+    ```
+  - 1002 - fk
+    ```
+    useradd fk -m -s /bin/bash -G adm,cdrom,audio,dip,video,plugdev,systemd-journal,kvm,netdev,bluetooth,lpadmin,vboxusers
+    ```
+  - 1003 - bank
+    ```
+    useradd -m -s /bin/bash -G cdrom,audio,dip,video,plugdev,netdev,bluetooth,lpadmin bank
+    ```
+- Activate users by setting password for each
+  ```
+  passwd <username>
+  ```
+- Update file `/etc/security/pam_mount.conf.xml` for all user accounts,
+  see *Unlock /home at login automatically*
+- Remark: 
+  To enable audio the user must be in group `audio`
+- Further helpful commands
+  ```
+  sudo usermod -a -G video bank   # add user 'bank' to group 'video'
+  sudo adduser bank video   # add user 'bank' to group 'video'
+  sudo deluser --remove-home --remove-all-files www   # delete user 'www' with all its files
+  ```
+
+### Setup group `data` and `/data` folder
+```
+sudo groupadd data   # create group 'data'
+sudo usermod -aG data install
+sudo usermod -aG data www
+sudo usermod -aG data fk
+sudo usermod -aG data bank
+```
+```
+sudo mkdir /home/data
+sudo chown root:data /home/data
+sudo chmod 750 /home/data/
+sudo ln -s /home/data /data
+```
+TODO: define subfolder structure
+
+
+
+---
+---
 ## User Settings
 ### Desktop / KDE Settings
 - Batterymanagement: Long lifetime  
@@ -53,6 +173,7 @@ TODO
   - Firefox
   - Konsole
   - Visual Studio Code
+  - KCalc (Calculator)
 
 - Switch off Bluetooth
 
@@ -74,8 +195,10 @@ TODO
           `Einstellungen` --> Tick all (X)
 
 
+
 ### Execute user setup scripts
 TODO
+
 
 
 ### Enable sound for su-users
@@ -107,12 +230,21 @@ export SU_USER=www
 pactl load-module module-native-protocol-tcp
 xhost si:localuser:$SU_USER && sudo -u $SU_USER sh -c "PULSE_SERVER='tcp:127.0.0.1:4713' firefox "$@""
 ```
+```
+export SU_USER=www
+pactl load-module module-native-protocol-tcp
+xhost si:localuser:$SU_USER
+su -s /bin/bash -c "PULSE_SERVER='tcp:127.0.0.1:4713' firefox" $SU_USER
+```
+
+
 
 ### Customize Visual Code
 - Help --> Welcome
   Choose the look you want: Dark Modern 
 - Add extensions for Python
   - TODO
+
 
 
 ### Setup ssh github access
