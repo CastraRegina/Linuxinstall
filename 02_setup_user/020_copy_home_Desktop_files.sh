@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -------------------------------------------------------------------------------
-# Copy files into $HOME/bin folder
+# Copy files into Desktop folder
 # -------------------------------------------------------------------------------
 
 
@@ -15,8 +15,8 @@ set -u   # treat unset variables as an error and exit immediately
 . ./000_common.sh
 
 
-srcDir=./HOME/bin
-dstDir=$HOME/bin
+srcDir=./HOME/Desktop
+dstDir=$HOME/Schreibtisch
 
 
 # -------------------------------------------------------------------------------

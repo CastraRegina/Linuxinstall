@@ -239,7 +239,9 @@ TODO: define subfolder structure
 
 
 ### Execute user setup scripts
-Change into folder [02_setup_user](02_setup_user) and execute file `010_copy_home_bin_files.sh`
+Change into folder [02_setup_user](02_setup_user) and execute files
+- `010_copy_home_bin_files.sh`
+- `020_copy_home_Desktop_files.sh`
 
 
 

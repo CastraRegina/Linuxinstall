@@ -1,0 +1,10 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=firefox_bank
+Exec=$HOME/bin/start_firefox_as_user.sh bank
+Comment=
+Icon=firefox
+Type=Application
+Terminal=false
+StartupNotify=false
+
