@@ -239,7 +239,7 @@ TODO: define subfolder structure
 
 
 ### Execute user setup scripts
-TODO
+Change into folder [02_setup_user](02_setup_user) and execute file `010_copy_home_bin_files.sh`
 
 
 
@@ -272,7 +272,8 @@ export SU_USER=www
 pactl load-module module-native-protocol-tcp
 xhost si:localuser:$SU_USER && su $SU_USER sh -c "PULSE_SERVER='tcp:127.0.0.1:4713' firefox "$@""
 ```
-It should start without asking for a password if above configurations were done correctly.
+It should start without asking for a password if above configurations were done correctly,  
+see section [Switch user account without password](#switch-user-account-without-password).
 
 
 
