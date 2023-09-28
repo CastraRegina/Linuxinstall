@@ -118,6 +118,6 @@ function updateDir () {
         updateFile "${fullSrcFilepath}" "${fullDstDir}" 
       done
     ' exec-sh {} +
-  cd "${OLDDIR}"
+  cd "${oldDir}"
 }
 export -f updateDir
