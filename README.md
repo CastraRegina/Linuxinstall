@@ -1,6 +1,10 @@
 # Linuxinstall
 Personal guide to installing and setting up a Linux laptop
 
+[System Settings](#system-settings)  
+[User Settings](#user-settings)  
+[HowTos, infos and command examples](#howtos-infos-and-command-examples)
+
 
 ## System Settings
 TODO
@@ -8,6 +12,12 @@ TODO
 ### Execute system setup scripts
 TODO
 
+
+### Configure editor
+Select `/usr/bin/vim.basic`
+```
+sudo update-alternatives --config editor
+```
 
 
 ### Encrypt /home and pertinent encryption settings
@@ -78,6 +88,7 @@ See [Unlocking Encrypted Home Partition on Login](https://www.doof.me.uk/2019/09
   ```
 
 
+
 ### Create user accounts
 - User ids and names
   - 1000 - install
@@ -107,6 +118,36 @@ See [Unlocking Encrypted Home Partition on Login](https://www.doof.me.uk/2019/09
   sudo adduser bank video   # add user 'bank' to group 'video'
   sudo deluser --remove-home --remove-all-files www   # delete user 'www' with all its files
   ```
+
+
+
+### Switch user account without password
+- Setup overview  
+  ```
+  fk --> bank
+  fk --> www
+  ```
+- ~~Modify `/etc/sudoers` by using `visudo`~~
+- Add lines `/etc/pam.d/su` right after entry `auth  sufficient pam_rootok.so`
+  ```
+  auth  [success=ignore default=1] pam_succeed_if.so user = bank
+  auth  sufficient                 pam_succeed_if.so use_uid user = fk
+  auth  [success=ignore default=1] pam_succeed_if.so user = www
+  auth  sufficient                 pam_succeed_if.so use_uid user = fk
+  ```
+- Modify `/etc/pam.d/common-auth` to avoid password request when mounting encrypted partition:  
+  add `disable_interactive` in the line right after `pam_mount.so` separated by space(s)
+  ```
+  auth    optional        pam_mount.so disable_interactive
+  ```
+- Modify `/etc/pam.d/common-session` to avoid password request when mounting encrypted partition:  
+  add `disable_interactive` in the line right after `pam_mount.so` separated by space(s)
+  ```
+  session optional        pam_mount.so disable_interactive
+  ```
+Now `su www` or `su bank` should work without any password request for user `fk`
+
+
 
 ### Setup group `data` and `/data` folder
 ```
@@ -203,7 +244,7 @@ TODO
 
 
 ### Enable sound for su-users
-Multi-User audio sharing work on Pipewire:  
+Multi-User audio sharing works on Pipewire:  
 See: [How does Multi-User audio sharing work on Pipewire?](https://www.reddit.com/r/archlinux/comments/s3zn00/how_does_multiuser_audio_sharing_work_on_pipewire/?rdt=57318)  
 and: [Migrate PulseAudio --> `module-native-protocol-tcp`](https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Migrate-PulseAudio#module-native-protocol-tcp)
 
@@ -225,18 +266,13 @@ vi $HOME/.config/pipewire/pipewire-pulse.conf
         }
     }
 ```
-Check it:
+Check if `firefox` starts and plays sound:
 ```
 export SU_USER=www
 pactl load-module module-native-protocol-tcp
-xhost si:localuser:$SU_USER && sudo -u $SU_USER sh -c "PULSE_SERVER='tcp:127.0.0.1:4713' firefox "$@""
+xhost si:localuser:$SU_USER && su $SU_USER sh -c "PULSE_SERVER='tcp:127.0.0.1:4713' firefox "$@""
 ```
-```
-export SU_USER=www
-pactl load-module module-native-protocol-tcp
-xhost si:localuser:$SU_USER
-su -s /bin/bash -c "PULSE_SERVER='tcp:127.0.0.1:4713' firefox" $SU_USER
-```
+It should start without asking for a password if above configurations were done correctly.
 
 
 
@@ -304,7 +340,7 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   ```
   sudo mount -t cifs //192.168.2.5/test /mnt/lanas01_test -o username=test,uid=$(id -u),gid=$(id -g)
   ```
-  
+
 - List partitions
   ```
   lsblk -o name,mountpoint,label,size,uuid
