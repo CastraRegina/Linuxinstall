@@ -10,7 +10,8 @@ Personal guide to installing and setting up a Linux laptop
 TODO
 
 ### Execute system setup scripts
-TODO
+Change into folder [01_setup_system](01_setup_system) and execute files
+- `010_install_packages.sh`
 
 
 ### Configure editor
@@ -235,6 +236,8 @@ TODO: define subfolder structure
         - O Eingegebene Suchbegriffe und Formulardaten speichern
         - X Die Chronik löschen, wenn Firefox geschlossen wird  
           `Einstellungen` --> Tick all (X)
+  - Dateien und Anwendungen
+    - Downloads: create sub-folder of this year, e.g. `$HOME/Downloads/2023`
 
 
 
@@ -334,6 +337,35 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   ```
 
 
+
+### VNC setup
+- Download [realvnc viewer](https://www.realvnc.com/de/connect/download/viewer/linux/)
+  ```
+  wget https://downloads.realvnc.com/download/file/viewer.files/VNC-Viewer-7.6.1-Linux-x64.deb
+  ```
+- Install deb file
+  ```
+  sudo gdebi VNC-Viewer-7.6.1-Linux-x64.deb
+  ```
+  
+
+- Start VNC server at remote host
+  ```
+  sudo systemctl start vncserver-x11-serviced.service
+  vncserver-virtual -geometry 1800x1000
+  ```
+- Connect with vnc viewer using *RealVNC Viewer*   
+  Sample settings:  
+  - `fxxxxxf.freeddns.org:13031`  
+    user: fk
+  - `fxxxxx1.freeddns.org:13041`  
+    user: fk
+- Stop VNC server at remote host
+  ```
+  sudo systemctl stop vncserver-x11-serviced.service
+  vncserver-virtual -kill :1
+  cat ~/.vnc/*.pid
+  ```
 
 
 ---
