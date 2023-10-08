@@ -64,7 +64,7 @@ export _SW2INSTALL="$_SW2INSTALL libpng-dev libfreetype6-dev libgif-dev libgtk-3
 export _SW2INSTALL="$_SW2INSTALL libcairo2-dev libspiro-dev python3-dev ninja-build cmake build-essential gettext"
 export _SW2INSTALL="$_SW2INSTALL chromium uhubctl watchdog ecryptfs-utils rsync lsof cryptsetup open-iscsi"
 export _SW2INSTALL="$_SW2INSTALL usb-creator-gtk software-properties-common apt-transport-https wget libpam-mount"
-export _SW2INSTALL="$_SW2INSTALL baobab gdebi-core retext dosfstools ssvnc krdc keepassxc"
+export _SW2INSTALL="$_SW2INSTALL baobab gdebi-core retext dosfstools ssvnc krdc keepassxc oathtool"
 
 
 
