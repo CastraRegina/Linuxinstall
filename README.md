@@ -74,6 +74,88 @@ sudo apt update && sudo apt install -y code
 ```
 
 
+### Change partition table
+Remark: do a `sudo swapoff -a` before changing swap partition(s).  
+Use e.g. `gparted` to create and resize partitions.  
+Use the *live linux on USB-stick* to resize the root partition.
+```
+sudo fdisk -l
+```
+```
+Disk /dev/nvme0n1: 1.82 TiB, 2000398934016 bytes, 3907029168 sectors
+Disk model: Samsung SSD 990 PRO 2TB                 
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: gpt
+Disk identifier: C38612F2-FC68-497E-8F56-E2CE20A4EACA
+
+Device              Start        End    Sectors  Size Type
+/dev/nvme0n1p1       2048    1050623    1048576  512M EFI System - /boot/efi
+/dev/nvme0n1p2    1050624  205850623  204800000 97.7G Linux - / 100000 MiB root
+/dev/nvme0n1p3  205850624  410650623  204800000 97.7G Linux -   100000 MiB root 2
+/dev/nvme0n1p4  410650624 3871770623 3461120000  1.6T Linux - /home 1690000 MiB
+/dev/nvme0n1p5 3871770624 3888154623   16384000  7.8G Linux swap - 8000MiB
+/dev/nvme0n1p6 3888154624 3896346623    8192000  3.9G Linux - /mnt/tinyraid1 4000 MiB
+
+
+Disk /dev/nvme1n1: 3.64 TiB, 4000787030016 bytes, 7814037168 sectors
+Disk model: CT4000P3PSSD8                           
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: gpt
+Disk identifier: 64B365E4-830D-48AF-8842-DD0B66045FCF
+
+Device              Start        End    Sectors  Size Type
+/dev/nvme1n1p1       2048    1050623    1048576  512M EFI System - /boot/efi
+/dev/nvme1n1p2    1050624  205850623  204800000 97.7G Linux - / 100000 MiB root
+/dev/nvme1n1p3  205850624  410650623  204800000 97.7G Linux -   100000 MiB root 2
+/dev/nvme1n1p4  410650624 4097050623 3686400000  1.7T Linux - /mnt/bakhome 1800000 MiB
+/dev/nvme1n1p5 4097050624 7783450623 3686400000  1.7T Linux - /mnt/bakmlc4 1800000 MiB
+/dev/nvme1n1p6 7783450624 7799834623   16384000  7.8G Linux swap - 8000MiB
+/dev/nvme1n1p7 7799834624 7808026623    8192000  3.9G Linux - /mnt/tinyraid1 4000 MiB
+```
+
+
+### Create mount point folders on `/mnt`
+```
+/mnt/bakhome
+/mnt/bakmlc4
+/mnt/lanas01_bakmlc4
+/mnt/lanas01_bakmlc5
+/mnt/lanas01_test
+/mnt/tinyraid1
+```
+
+### Switch swap off permanently
+Disable by removing (commenting out) the swap-partition entry in `/etc/fstab`#
+```
+swapoff -a 
+mount -a
+free -h
+```
+Check systemctl:
+```
+systemctl --type swap
+```
+```
+sudo systemctl mask "dev-nvme0n1p5.swap"
+sudo systemctl mask "dev-nvme1n1p6.swap" 
+```
+
+### Create /tmp in memory 
+Add following line to `/etc/fstab` and clean `/tmp` by a different (live) linux before activating:
+```
+tmpfs /tmp tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=8192M 0 0
+```
+
+
+### Create encrypted partition
+TODO
+
+
+
 ### Encrypt /home and pertinent encryption settings
 #### Encrypt /home
 See [Encrypting the Home Partition on an Existing Linux Installation](https://techblog.dev/posts/2022/03/encrypting-the-home-partition-on-an-existing-linux-installation/)  
@@ -140,6 +222,9 @@ See [Unlocking Encrypted Home Partition on Login](https://www.doof.me.uk/2019/09
   <cryptmount>cryptsetup open --allow-discards %(VOLUME) %(MNTPT)</cryptmount>
   <cryptumount>cryptsetup close %(MNTPT)</cryptumount>
   ```
+
+
+
 
 
 
