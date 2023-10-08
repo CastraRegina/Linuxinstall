@@ -6,8 +6,40 @@ Personal guide to installing and setting up a Linux laptop
 [HowTos, infos and command examples](#howtos-infos-and-command-examples)
 
 
+
 ## System Settings
-TODO
+First user name:  
+`install` with id `1000`
+
+
+### Setup Wi-Fi connection
+Check Settings to be stored „for all user w/o encryption“,  
+see: Netzwerk --> Verbindungen --> Wi-Fi
+
+
+### Install first packages
+```
+sudo apt update && sudo apt upgrade -y
+```
+```
+sudo apt install -y vim
+sudo apt install -y gparted
+sudo apt install -y net-tools
+sudo apt install -y ecryptfs-utils rsync lsof
+sudo apt install -y cryptsetup
+sudo apt install -y open-iscsi
+sudo apt install -y usb-creator-gtk
+sudo apt install -y software-properties-common apt-transport-https wget
+sudo apt install -y libpam-mount
+sudo apt install -y baobab        # Disk Usage Analyzer
+sudo apt install -y gdebi-core    # resolve deb-dependicies
+```
+
+### Install a Live System on USB drive
+- See [Ubuntu.com: create-a-usb-stick-on-ubuntu](https://ubuntu.com/tutorials/create-a-usb-stick-on-ubuntu#1-overview)  
+- Download Ubuntu iso-file from [https://ubuntu.com/download/desktop](https://ubuntu.com/download/desktop)
+- Use "Startup Disk Creator" to copy the iso-file onto the USB-stick (and make it bootable)
+
 
 ### Execute system setup scripts
 Change into folder [01_setup_system](01_setup_system) and execute files
@@ -18,6 +50,27 @@ Change into folder [01_setup_system](01_setup_system) and execute files
 Select `/usr/bin/vim.basic`
 ```
 sudo update-alternatives --config editor
+```
+
+
+### Install VS Code
+```
+sudo apt install -y software-properties-common apt-transport-https wget
+```
+```
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
+```
+```
+sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
+```
+```
+sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg]  https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+```
+```
+rm -f packages.microsoft.gpg
+```
+```
+sudo apt update && sudo apt install -y code
 ```
 
 
@@ -410,6 +463,17 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
     ```
     usermod -d /home/install -m install
     ```
+
+- Authenticator  
+  Commandline tool to generate same output like *google's Authenticator*
+  ```
+  sudo apt install -y oathtool
+  ```
+  Example:
+  ```
+  oathtool --totp -b   qv...yourSecret...p6
+  ```
+
 
 - Find and replace special chars in txt-file  
   TODO
