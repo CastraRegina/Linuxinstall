@@ -375,10 +375,14 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   ```
   git clone git@github.com:CastraRegina/Raspinstall.git
   ```
-- Specify your git global data
+- Specify your git global data (contributor email address)
   ```
-  git config --global user.email "git@github.com"
+  git config --global user.email "castraregina@xyz.net"   # replace by correct email-address, see github-settings
   git config --global user.name "fk"
+  ```
+  Check setting:
+  ```
+  git config --global user.email
   ```
 - Enjoy the usual git workstyle
   ```
