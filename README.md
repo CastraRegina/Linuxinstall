@@ -128,6 +128,7 @@ Device              Start        End    Sectors  Size Type
 /mnt/tinyraid1
 ```
 
+
 ### Switch swap off permanently
 Disable by removing (commenting out) the swap-partition entry in `/etc/fstab`#
 ```
@@ -144,6 +145,7 @@ sudo systemctl mask "dev-nvme0n1p5.swap"
 sudo systemctl mask "dev-nvme1n1p6.swap" 
 ```
 
+
 ### Create /tmp in memory 
 Add following line to `/etc/fstab` and clean `/tmp` by a different (live) linux before activating:
 ```
@@ -152,7 +154,49 @@ tmpfs /tmp tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=8192M 0 0
 
 
 ### Create encrypted partition
-TODO
+#### Setup
+```
+lsblk
+blkid
+sudo fdisk -l
+```
+```
+export NEW_PARTITION=/dev/nvme1n1p4
+sudo cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 -v luksFormat $NEW_PARTITION
+sudo cryptsetup config --label="crypt_bakhome" $NEW_PARTITION
+sudo cryptsetup luksDump $NEW_PARTITION
+```
+Get the output of `blkid | grep $NEW_PARTITION`
+```
+/dev/nvme1n1p4: UUID="0fc8cdf8-59c1-4839-91c2-34ad2f20302d" LABEL="crypt_bakhome" TYPE="crypto_LUKS" PARTUUID="e072239d-4eaa-4c9f-b752-478a7bbef61b"
+```
+or `sudo cryptsetup luksUUID $NEW_PARTITION`
+```
+0fc8cdf8-59c1-4839-91c2-34ad2f20302d
+```
+... and modify `/etc/crypttab`
+```
+crypt_bakhome           UUID=0fc8cdf8-59c1-4839-91c2-34ad2f20302d               none            luks,discard,noauto
+```
+Create filesystem
+```
+sudo cryptsetup luksOpen $NEW_PARTITION crypt_bakhome
+sudo mkfs.btrfs -L "crypt_bakhome" /dev/mapper/crypt_bakhome
+sudo mount /dev/mapper/crypt_bakhome /mnt/bakhome
+sudo btrfs fi df /mnt/bakhome    # just to check systemdata&metadata=DUP
+```
+Make backup of LUKS header of the encrypted partition
+```
+sudo cryptsetup -v luksHeaderBackup /dev/nvme1n1p4 --header-backup-file /root/encrypted_partitions_LUKS_backup/LUKSheaderbak_nvme1n1p4_bakhome.bin
+```
+
+#### Make it easy mountable by user
+Modify
+- /etc/fstab
+- /etc/crypttab
+- /etc/security/pam_mount.conf.xml
+
+
 
 
 
@@ -182,6 +226,11 @@ echo $NEW_PARTITION_UUID    # check if uuid is retrieved
 
 echo "luks-$NEW_PARTITION_UUID   UUID=$NEW_PARTITION_UUID   none   luks,discard,noauto" | sudo tee -a /etc/crypttab
 ```
+Make backup of LUKS header of the encrypted partition
+```
+sudo cryptsetup -v luksHeaderBackup /dev/nvme0n1p4 --header-backup-file /root/encrypted_partitions_LUKS_backup/LUKSheaderbak_nvme0n1p4_home.bin
+```
+
 Logout completely and login as *pure root*:
 ```
 # as pure root do:
@@ -225,6 +274,12 @@ See [Unlocking Encrypted Home Partition on Login](https://www.doof.me.uk/2019/09
 
 
 
+### Convert ext4 partition to btrfs
+```
+sudo fsck -N /dev/mapper/crypt_home          # which version ext2/3/4 is it?
+sudo fsck.ext4 -f /dev/mapper/crypt_home     # check partition first
+sudo btrfs-convert /dev/mapper/crypt_home
+```
 
 
 
@@ -246,6 +301,12 @@ See [Unlocking Encrypted Home Partition on Login](https://www.doof.me.uk/2019/09
 - Activate users by setting password for each
   ```
   passwd <username>
+  ```
+- Make user `install` able to do a `sudo` without password:  
+  Use editor `visudo` to edit file `/etc/sudoers`.  
+  Add following line **at the end of the file** (otherwise it can be withdrawn by later entries):
+  ```
+  install ALL=(ALL) NOPASSWD:ALL
   ```
 - Update file `/etc/security/pam_mount.conf.xml` for all user accounts,
   see *Unlock /home at login automatically*
@@ -305,6 +366,30 @@ sudo ln -s /home/data /data
 TODO: define subfolder structure
 
 
+
+### Set partition labels
+```
+findmnt --verify    # verify entries in /etc/fstab
+```
+```
+sudo swaplabel -L "swap" /dev/nvme0n1p5
+sudo swaplabel -L "swap" /dev/nvme1n1p6
+
+sudo e2label /dev/mapper/crypt_home home
+sudo e2label /dev/nvme0n1p2 root
+
+sudo cryptsetup config --label="crypt_bakmlc4" /dev/nvme1n1p5
+sudo cryptsetup config --label="crypt_bakhome" /dev/nvme1n1p4
+
+# sudo btrfs filesystem label /dev/XXX "new label"
+```
+
+
+### Content of modified files
+TODO show:  
+- /etc/fstab
+- /etc/crypttab
+- /etc/security/pam_mount.conf.xml
 
 
 ---
@@ -498,9 +583,9 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   ```
 - Connect with vnc viewer using *RealVNC Viewer*   
   Sample settings:  
-  - `fxxxxxf.freeddns.org:13031`  
+  - `fxxxxgf.freeddns.org:13031`  
     user: fk
-  - `fxxxxx1.freeddns.org:13041`  
+  - `fxxxx11.freeddns.org:13041`  
     user: fk
 - Stop VNC server at remote host
   ```
@@ -516,6 +601,11 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
 - Mount NAS
   ```
   sudo mount -t cifs //192.168.2.5/test /mnt/lanas01_test -o username=test,uid=$(id -u),gid=$(id -g)
+  ```
+
+- Remount a filesystem as read/write  
+  ```
+  sudo mount -o remount,rw /dev/mapper/crypt_bakmlc4 /mnt/bakmlc4
   ```
 
 - List partitions
@@ -563,6 +653,11 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   oathtool --totp -b   qv...yourSecret...p6
   ```
 
+- Backup and restore the LUKS header of the encrypted partition
+  ```
+  sudo cryptsetup -v luksHeaderBackup  $CRYPT_PARTITION --header-backup-file LuksHeaderBackup.bin
+  sudo cryptsetup -v luksHeaderRestore $CRYPT_PARTITION --header-backup-file LuksHeaderBackup.bin
+  ```
 
 - Find and replace special chars in txt-file  
   TODO
