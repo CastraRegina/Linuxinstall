@@ -5,23 +5,19 @@ Personal guide to installing and setting up a Linux laptop
 [User Settings](#user-settings)  
 [HowTos, infos and command examples](#howtos-infos-and-command-examples)
 
-
-
 ## System Settings
 First user name:  
 `install` with id `1000`
-
 
 ### Setup Wi-Fi connection
 Check Settings to be stored „for all user w/o encryption“,  
 see: Netzwerk --> Verbindungen --> Wi-Fi
 
-
 ### Install first packages
-```
+```bash
 sudo apt update && sudo apt upgrade -y
 ```
-```
+```bash
 sudo apt install -y vim
 sudo apt install -y gparted
 sudo apt install -y net-tools
@@ -44,11 +40,12 @@ sudo apt install -y gdebi-core    # resolve deb-dependicies
 ### Execute system setup scripts
 Change into folder [01_setup_system](01_setup_system) and execute files
 - `010_install_packages.sh`
+- TODO
 
 
 ### Configure editor
 Select `/usr/bin/vim.basic`
-```
+```bash
 sudo update-alternatives --config editor
 ```
 
@@ -206,7 +203,7 @@ See [Encrypting the Home Partition on an Existing Linux Installation](https://te
 and [What is the recommended method to encrypt the home directory in Ubuntu 21.04?](https://askubuntu.com/questions/1335006/what-is-the-recommended-method-to-encrypt-the-home-directory-in-ubuntu-21-04)  
 
 Steps:
-```
+```bash
 sudo apt install -y libpam-mount
 cryptsetup benchmark    # to check for best performance (usually standard)
 lsblk   # or 'sudo fdisk -l'  to get a list of partitions
@@ -226,13 +223,14 @@ echo $NEW_PARTITION_UUID    # check if uuid is retrieved
 
 echo "luks-$NEW_PARTITION_UUID   UUID=$NEW_PARTITION_UUID   none   luks,discard,noauto" | sudo tee -a /etc/crypttab
 ```
+
 Make backup of LUKS header of the encrypted partition
-```
+```bash
 sudo cryptsetup -v luksHeaderBackup /dev/nvme0n1p4 --header-backup-file /root/encrypted_partitions_LUKS_backup/LUKSheaderbak_nvme0n1p4_home.bin
 ```
 
 Logout completely and login as *pure root*:
-```
+```bash
 # as pure root do:
 export NEW_HOME_PARTITION=/dev/nvme0n1p4
 sudo cryptsetup -v luksOpen $NEW_HOME_PARTITION crypt_home
@@ -248,37 +246,58 @@ sudo mount /dev/mapper/crypt_home /home
 
 #### Unlock /home at login automatically
 See [Unlocking Encrypted Home Partition on Login](https://www.doof.me.uk/2019/09/22/unlocking-encrypted-home-partition-on-login/)
+
 - For auto-mount at login install package `libpam-mount`
-  ```
+  ```bash
   sudo apt install -y libpam-mount
   ```
 - Update `/etc/crypttab` to use options `luks,discard,noauto` for the encrypted `/home`
-  ```
+  ```bash
   crypt_home   UUID=b3d517b3-6db0-4210-9c0a-44f0401cc729   none   luks,discard,noauto
-  ``` 
-- Get `partuuid` of encrypted partition
   ```
+- Get `partuuid` of encrypted partition
+  ```bash
   sudo blkid $NEW_HOME_PARTITION
   ```
 - Take the `partuuid` and use the path link, e.g.
-  ```
+  ```bash
   /dev/disk/by-partuuid/f0fe94b8-f61a-4433-ac1b-b3abfe530088
   ```
 - Modify `/etc/security/pam_mount.conf.xml`, e.g. for user `install`
-  ```
+  ```bash
   <volume user="install" fstype="crypt" path="/dev/disk/by-partuuid/f0fe94b8-f61a-4433-ac1b-b3abfe530088" mountpoint="crypt_home" />
   <volume user="install" fstype="auto" path="/dev/mapper/crypt_home" mountpoint="/home" options="defaults,relatime,discard" />
   <cryptmount>cryptsetup open --allow-discards %(VOLUME) %(MNTPT)</cryptmount>
   <cryptumount>cryptsetup close %(MNTPT)</cryptumount>
   ```
 
+### Create raid1 `/mnt/tinyraid1`
+Only user `bank` should automount & decrypt the two partitions on both disks.
 
+See [https://gist.github.com/MaxXor/ba1665f47d56c24018a943bb114640d7](https://gist.github.com/MaxXor/ba1665f47d56c24018a943bb114640d7)  
+TODO
 
 ### Convert ext4 partition to btrfs
 ```
 sudo fsck -N /dev/mapper/crypt_home          # which version ext2/3/4 is it?
 sudo fsck.ext4 -f /dev/mapper/crypt_home     # check partition first
 sudo btrfs-convert /dev/mapper/crypt_home
+```
+Remove suvolume and image file `ext2_saved/image`
+```
+sudo btrfs subvolume delete /home/ext2_saved
+```
+Defrag file system
+```
+sudo btrfs filesystem defrag -v -r -f -t 32M /home 
+```
+Balance file system
+```
+sudo btrfs balance start -m /home 
+```
+Check file system
+```
+sudo btrfsck --check --force /dev/mapper/crypt_home
 ```
 
 
@@ -390,6 +409,46 @@ TODO show:
 - /etc/fstab
 - /etc/crypttab
 - /etc/security/pam_mount.conf.xml
+
+
+
+### Install latest python
+- Install latest Python version: 
+  - Create folder /opt/python
+  - Download version `3.12.0` from [python.org/downloads](https://www.python.org/downloads/)
+  - `wget https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz`
+  - Extract in folder `/opt/python` : `tar xzf Python-3.12.0.tgz`
+  - Change into `/opt/python/Python-3.12.0` and execute `./configure --prefix=/opt/python --enable-optimizations`
+  - Execute `make -s -j4`
+  - Execute `make test`
+  - Execute `make install`
+  - Update `$HOME/.bashrc` (if wanted)  
+    `export PATH=/opt/python/Python-3.12.0:/opt/python/bin:$PATH`  
+    `export PYTHONPATH=opt/python/Python-3.12.0`
+- Upgrade `pip`: `/opt/python/bin/pip3 install --upgrade pip`  
+    Check pip-version: `python3 -m pip --version`
+
+
+### Hide `HPLIPS`-systray icon
+- Go into folder `/etc/xdg/autostart`
+- Copy file `/etc/xdg/autostart/hplip-systray.desktop` into folder
+  `$HOME/.config/autostart/`
+- Add following line to file `$HOME/.config/autostart/hplip-systray.desktop`:  
+  `Hidden=true`
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ---
@@ -504,13 +563,64 @@ It should start without asking for a password if above configurations were done 
 see section [Switch user account without password](#switch-user-account-without-password).
 
 
-
 ### Customize Visual Code
+
 - Help --> Welcome
   Choose the look you want: Dark Modern 
-- Add extensions for Python
-  - TODO
+- Install extensions for Python and others  
+  Press Ctrl+P and type `ext install <extension>`  
+  or from command-line `code --install-extension <extension>`
+  - Markdownlint (DavidAnson.vscode-markdownlint)
+  - Python extension for Visual Studio Code (ms-python.python)
+  - Python indent (KevinRose.vsc-python-indent)
+  - autoDocstring - Python Docstring Generator (njpwerner.autodocstring)
+  - Pylance (ms-python.vscode-pylance) (seems to be already installed by ms-python.python)
+  - Pylint (ms-python.pylint)
+  - GitLens - Git supercharged (eamodio.gitlens) (if it is really needed?)
+  - Markdown Preview Mermaid Support (bierner.markdown-mermaid) for diagrams and flowcharts
+  - XML (redhat.vscode-xml)
+  - Code Spell Checker (streetsidesoftware.code-spell-checker)
+  - Todo Tree (Gruntfuggly.todo-tree)
+  - Flake8 (ms-python.flake8)
+  - autopep8 (ms-python.autopep8)
+- Setup / modify settings (`File->Preferences->Settings [Ctrl+,]`):
+  - Editor: Format On Save: check-on
+  - Editor: Default Formatter: Python (ms-python.python)
+  - Python > Analysis: Type Checking Mode: basic
+  - Python Select Interpreter: `./venv/bin/python`
+  - Edit `$HOME/.config/Code/User/settings.json`:  
 
+    ```json
+    {
+        "workbench.colorTheme": "Default Dark Modern",
+        "window.zoomLevel": 1,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.python",
+        "python.analysis.typeCheckingMode": "basic",
+        "python.defaultInterpreterPath": "./venv/bin/python",
+        "python.linting.flake8Enabled": true,
+        "editor.rulers": [
+            79,
+            100
+        ],
+        "redhat.telemetry.enabled": false,
+        "[xml]": {
+            "editor.defaultFormatter": "redhat.vscode-xml"
+        },
+        "[python]": {
+            "editor.formatOnType": true
+        }
+    }
+    ```
+
+  - Add keyboard shortcut (`File->Preferences->Keyboard Shortcuts [Ctrl+K Ctrl+S]`, `keybindings.json`)
+    - `Crtl+RETURN`  Python: Run Python File in Terminal
+
+- Helpful Keyboard Shortcuts (`File->Preferences->Keyboard Shortcuts [Ctrl+K Ctrl+S]`, `keybindings.json`)
+  - `Ctrl+Shift+P` to open the Command Palette
+  - `Crtl+Shift+7` Fold All Block Comments
+  - `Crtl+x`       Remove whole line (if nothing is selected)
+  - `Crtl+RETURN`  Python: Run Python File in Terminal (assigned by using `Ctrl+Shift+P`)  
 
 
 ### Setup ssh github access
@@ -643,6 +753,13 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
     usermod -d /home/install -m install
     ```
 
+- Check health of harddrive
+  ```
+  smartctl --test=long /dev/nvme0n1
+  smartctl -a /dev/nvme0n1
+  smartctl -H /dev/nvme0n1
+  ```
+
 - Authenticator  
   Commandline tool to generate same output like *google's Authenticator*
   ```
@@ -659,12 +776,25 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   sudo cryptsetup -v luksHeaderRestore $CRYPT_PARTITION --header-backup-file LuksHeaderBackup.bin
   ```
 
-- Find and replace special chars in txt-file  
-  TODO
-
+- Convert utf-8 file (`README.md`) to ascii:
+  ```
+  cat README.md | iconv -f utf-8 -t ascii//TRANSLIT > output.txt
+  ```
 
 ### Infos
 - Access BIOS and boot menu
   - BIOS: F2 or (ESC)
   - Boot menu: F7 or (Entf)
 - Info for `gparted`: 1 GB = 953.6743 MiB
+
+---
+---
+---
+
+# TODOs / next steps
+bank: tinyraid1 + regular snapshots + auto-backup to USB-sticks  
+root: internal backup + regular snapshots  
+root: home regular snapshots  
+root: backup to NAS  
+fk: VM  
+
