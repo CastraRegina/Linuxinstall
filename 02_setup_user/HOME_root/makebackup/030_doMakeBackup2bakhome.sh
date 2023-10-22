@@ -188,7 +188,10 @@ echo "====================================================================="
 echo "--- next: please umount and close the encryption --------------------"
 echo "      020_mount_local_bakhome.sh umount"
 echo "      remove a snapshot with:"
-echo "        e.g. btrfs subvolume delete /mnt/bakhome/snapshots/snap_20231022_194647"
+echo "        btrfs subvolume delete /mnt/bakhome/snapshots/snap_20231022_194647"
+echo "      handle rdiff-backup:"
+echo "        rdiff-backup --list-increments /mnt/bakhome/data/mlc05/backup"
+echo "        rdiff-backup --force --remove-older-than 100B /mnt/bakhome/data/mlc05/backup"
 echo "---------------------------------------------------------------------"
 
 
