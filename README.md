@@ -472,6 +472,13 @@ TODO show:
 ---
 ---
 ## User Settings
+
+### Setup for user `root` only
+```
+ln -s /data/git/Linuxinstall/02_setup_user/HOME_root/makebackup $HOME/makebackup
+```
+
+
 ### Desktop / KDE Settings
 - Batterymanagement: Long lifetime  
   (Tuxedo Control Center --> Einstellungen --> Akku-Ladeoptionen)  
@@ -772,13 +779,18 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
     ```
 
 - Check health of harddrive
-  ```
-  smartctl --test=long /dev/nvme0n1
+  ```bash
+  smartctl --test=short /dev/nvme0n1
+  smartctl --test=long  /dev/nvme0n1
+  nvme device-self-test -s 1h /dev/nvme0n1  # short
+  nvme device-self-test -s 2h /dev/nvme0n1  # long
   smartctl -a /dev/nvme0n1
   smartctl -H /dev/nvme0n1
   nvme list
   nvme smart-log /dev/nvme0n1
   nvme error-log /dev/nvme0n1
+  nvme self-test-log /dev/nvme0n1
+  nvme endurance-log /dev/nvme0n1  # does not work 
   ```
 
 - Authenticator  
