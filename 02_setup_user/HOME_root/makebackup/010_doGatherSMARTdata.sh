@@ -1,11 +1,11 @@
 #/bin/bash
 
 export _DEVICES="/dev/nvme0n1 /dev/nvme1n1"
-export _LOG_FOLDER="$HOME/logs/disk-infos/"
+export _LOG_FOLDER="$HOME/logs/disk_infos/"
 
 [ -d "${_LOG_FOLDER}" ] || mkdir -p "${_LOG_FOLDER}"
 
-DATETIME=$(date +%Y.%m.%d-%H\.%M\.%S)
+DATETIME=$(date +%Y%m%d_%H%M%S)
 
 
 for i in $_DEVICES ; do
