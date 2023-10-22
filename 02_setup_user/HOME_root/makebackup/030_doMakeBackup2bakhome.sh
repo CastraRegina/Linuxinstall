@@ -44,29 +44,29 @@ function saveInfo()
 {
   dpkg --get-selections "*" > $INFODIR/debian_package_selections.txt
 
-  BACKUPTIME=$(date +%Y%m%d_%H%M%S)
+  backup_time=$(date +%Y%m%d_%H%M%S)
 
-  echo "$BACKUPTIME ---------------------------------------"     >> $INFODIR/last_backup_mnt.txt
+  echo "$backup_time ---------------------------------------"    >> $INFODIR/last_backup_mnt.txt
   ls -ld /mnt/*                                                  >> $INFODIR/last_backup_mnt.txt
   echo "-------------------------------------------------------" >> $INFODIR/last_backup_mnt.txt
 
   
-  echo "$BACKUPTIME ---------------------------------------"     >> $INFODIR/last_backup_mount.txt
+  echo "$backup_time ---------------------------------------"    >> $INFODIR/last_backup_mount.txt
   mount                                                          >> $INFODIR/last_backup_mount.txt
   echo "-------------------------------------------------------" >> $INFODIR/last_backup_mount.txt
 
  
-  echo "$BACKUPTIME ---------------------------------------"     >> $INFODIR/last_backup_df.txt
+  echo "$backup_time ---------------------------------------"    >> $INFODIR/last_backup_df.txt
   df -h                                                          >> $INFODIR/last_backup_df.txt
   echo "-------------------------------------------------------" >> $INFODIR/last_backup_df.txt
 
  
-  echo "$BACKUPTIME ---------------------------------------"     >> $INFODIR/last_backup_blkid.txt
+  echo "$backup_time ---------------------------------------"    >> $INFODIR/last_backup_blkid.txt
   blkid                                                          >> $INFODIR/last_backup_blkid.txt
   echo "-------------------------------------------------------" >> $INFODIR/last_backup_blkid.txt
 
  
-  echo "$BACKUPTIME ---------------------------------------"     >> $INFODIR/last_backup_btrfs.txt
+  echo "$backup_time ---------------------------------------"    >> $INFODIR/last_backup_btrfs.txt
   btrfs filesystem show                                          >> $INFODIR/last_backup_btrfs.txt
   echo "-------------------------------------------------------" >> $INFODIR/last_backup_btrfs.txt
 
@@ -76,26 +76,26 @@ function saveInfo()
 # ===================================================================
 function makeBackupTo()
 {
-  DESTDIR="$1"
+  dest_dir="$1"
 
   # build up include directories: -----------------------------------
-  INCLUDEDIRS=
+  include_dirs=
   for i in $SRCDIRS; do
-    INCLUDEDIRS="$INCLUDEDIRS --include ${i} "
+    include_dirs="$include_dirs --include ${i} "
   done
   # -----------------------------------------------------------------
 
   # build up exclude directories: -----------------------------------
-  EXCLUDEDIRS="--exclude $DESTDIR "
+  exclude_dirs="--exclude $dest_dir "
   for i in $NOBACKUPDIRS; do
-    EXCLUDEDIRS="$EXCLUDEDIRS --exclude ${i} "
+    exclude_dirs="$exclude_dirs --exclude ${i} "
   done
   # -----------------------------------------------------------------
 
-  #echo $INCLUDEDIRS
-  echo "rdiff-backup $EXCLUDEDIRS $INCLUDEDIRS --exclude '**' / $DESTDIR"
-  ### time  rdiff-backup --force $EXCLUDEDIRS $INCLUDEDIRS --exclude '**' / $DESTDIR
-  time  rdiff-backup $EXCLUDEDIRS $INCLUDEDIRS --exclude '**' / $DESTDIR &
+  #echo $include_dirs
+  echo "rdiff-backup $exclude_dirs $include_dirs --exclude '**' / $dest_dir"
+  ### time  rdiff-backup --force $exclude_dirs $include_dirs --exclude '**' / $dest_dir
+  time  rdiff-backup $exclude_dirs $include_dirs --exclude '**' / $dest_dir &
 }
 
 
@@ -104,15 +104,15 @@ function makeBackupTo()
 function makeSnapshots()
 {
   # ${i}/data --> ${i}/snapshots/snap_YYYYMMDD-hhmmss
-  SNAPTIME=$(date +%Y%m%d_%H%M%S)
+  snap_time=$(date +%Y%m%d_%H%M%S)
   for i in $SNAPDIRS; do
     if [ ! -e ${i}/data  -o  ! -e ${i}/snapshots ] ; then
       echo "SNAPDIR-src ${i}/data  OR  SNAPDIR-dest ${i}/snapshots does not exist"
     else
-      SNAPSOURCE="${i}/data" 
-      SNAPNAME="${i}/snapshots/snap_${SNAPTIME}"
-      echo "btrfs subvolume snapshot -r ${SNAPSOURCE} ${SNAPNAME}"
-      btrfs subvolume snapshot -r "${SNAPSOURCE}" "${SNAPNAME}"
+      snap_source="${i}/data" 
+      snap_name="${i}/snapshots/snap_${snap_time}"
+      echo "btrfs subvolume snapshot -r ${snap_source} ${snap_name}"
+      btrfs subvolume snapshot -r "${snap_source}" "${snap_name}"
     fi
   done
 }
@@ -121,15 +121,15 @@ function makeSnapshots()
 # ===================================================================
 function showDiskfree()
 {
-  for DESTDIR in $DESTDIRS; do 
-    if [ -e $DESTDIR ] ; then
-      df -h $DESTDIR | head -n 1
+  for dest_dir in $DESTDIRS; do 
+    if [ -e $dest_dir ] ; then
+      df -h $dest_dir | head -n 1
       break
     fi
   done
-  for DESTDIR in $DESTDIRS; do
-    if [ -e $DESTDIR ] ; then
-      df -h $DESTDIR | head -n 2 | tail -n 1 
+  for dest_dir in $DESTDIRS; do
+    if [ -e $dest_dir ] ; then
+      df -h $dest_dir | head -n 2 | tail -n 1 
     fi
   done
 }
@@ -159,13 +159,13 @@ echo "---------------------------------------------------------------------"
 
 
 echo "---------------------------------------------------------------------"
-for DESTDIR in $DESTDIRS; do
-  if [ -e $DESTDIR ] ; then
-    echo "$(date +%Y%m%d_%H%M%S) $DESTDIR start_of_backup" >> $INFODIR/last_backup.txt
-    makeBackupTo $DESTDIR    
-    echo "$(date +%Y%m%d_%H%M%S) $DESTDIR end_of_backup"   >> $INFODIR/last_backup.txt
+for dest_dir in $DESTDIRS; do
+  if [ -e $dest_dir ] ; then
+    echo "$(date +%Y%m%d_%H%M%S) $dest_dir start_of_backup" >> $INFODIR/last_backup.txt
+    makeBackupTo $dest_dir    
+    echo "$(date +%Y%m%d_%H%M%S) $dest_dir end_of_backup"   >> $INFODIR/last_backup.txt
   else
-    echo DESTDIR $DESTDIR does not exist
+    echo DESTDIR $dest_dir does not exist
   fi
   echo
 done
