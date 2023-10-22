@@ -300,6 +300,24 @@ Check file system
 sudo btrfsck --check --force /dev/mapper/crypt_home
 ```
 
+### Optional: Backup `/home`, create filesystem and copy data back
+```bash
+sudo cryptsetup luksOpen /dev/nvme0n1p4 crypt_home
+sudo cryptsetup luksOpen /dev/nvme1n1p4 crypt_bakhome
+sudo mount /dev/mapper/crypt_home /home
+sudo mount /dev/mapper/crypt_bakhome /mnt/bakhome
+sudo rsync -avP /home/ /mnt/bakhome/
+sudo diff -rq /home /mnt/bakhome
+sudo rm -rf /mnt/bakhome/ext2_saved
+sudo rm -rf /mnt/bakhome/lost+found
+sudo umount /home
+sudo mkfs.btrfs -L "home" /dev/mapper/crypt_home   # use -f
+sudo mount /dev/mapper/crypt_home /home
+sudo rsync -avP /mnt/bakhome/ /home/
+sudo diff -rq /home /mnt/bakhome
+sudo umount /home
+sudo umount /mnt/bakhome
+```
 
 
 ### Create user accounts
@@ -758,6 +776,9 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   smartctl --test=long /dev/nvme0n1
   smartctl -a /dev/nvme0n1
   smartctl -H /dev/nvme0n1
+  nvme list
+  nvme smart-log /dev/nvme0n1
+  nvme error-log /dev/nvme0n1
   ```
 
 - Authenticator  
