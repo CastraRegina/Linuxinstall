@@ -1,6 +1,6 @@
 #!/bin/bash
 SRCDIRS="/bin /boot /etc /home /lib /lib32 /lib64 /libx32 /root /sbin /usr/local /usr/src /var"
-NOBACKUPDIRS="/data /dev /home/data/nobackup /media /mnt /opt /proc /run /srv /sys /snapshots /tmp /var/run"
+NOBACKUPDIRS="/data /dev /home/data/nobackup /media /mnt /opt /proc /run /srv /sys /home/snapshots /tmp /var/run"
 DESTDIRS="/mnt/bakhome/data/mlc05/backup /mnt/lanas01_bakmlc5/data/mlc05/backup"
 INFODIR="/root/logs/backup_infos"
 SNAPDIRS="/mnt/bakhome"    # ${i}/data --> ${i}/snapshots/snap_YYYYMMDD_hhmmss
@@ -187,7 +187,8 @@ date
 echo "====================================================================="
 echo "--- next: please umount and close the encryption --------------------"
 echo "      020_mount_local_bakhome.sh umount"
-echo "      remove a snapshot with:"
+echo "      handle snapshots:"
+echo "        btrfs subvolume list /mnt/bakhome"
 echo "        btrfs subvolume delete /mnt/bakhome/snapshots/snap_20231022_194647"
 echo "      handle rdiff-backup:"
 echo "        rdiff-backup --list-increments /mnt/bakhome/data/mlc05/backup"
