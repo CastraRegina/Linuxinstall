@@ -2,7 +2,8 @@
 
 # encrypted partition given by UUID - see also:
 #   /etc/fstab  /etc/crypttab  /etc/security/pam_mount.conf.xml 
-export UUID="0fc8cdf8-59c1-4839-91c2-34ad2f20302d"
+#export UUID="0fc8cdf8-59c1-4839-91c2-34ad2f20302d"
+export PART_UUID="e072239d-4eaa-4c9f-b752-478a7bbef61b"
 export CRYPT_MAP="crypt_bakhome"
 export MOUNTPOINT="/mnt/bakhome"
 
@@ -34,9 +35,12 @@ export JOBTODO=$1
 if [[ ${JOBTODO} = "mount" ]] || [[ ${JOBTODO} = "mountenc" ]] ; then 
 
 # start decrypting:
-  cryptsetup luksOpen /dev/disk/by-uuid/${UUID} ${CRYPT_MAP}
+  if [ ! -e /dev/mapper/${CRYPT_MAP} ] ; then
+    #cryptsetup luksOpen /dev/disk/by-uuid/${UUID} ${CRYPT_MAP}
+    cryptsetup luksOpen /dev/disk/by-partuuid/${PART_UUID} ${CRYPT_MAP}
+  fi
 
-  if [[ ${JOBTODO} = "mount" ]]  ; then
+  if [[ ${JOBTODO} = "mount" ]] ; then
     # mount:
     mount /dev/mapper/${CRYPT_MAP} ${MOUNTPOINT}
   fi 
