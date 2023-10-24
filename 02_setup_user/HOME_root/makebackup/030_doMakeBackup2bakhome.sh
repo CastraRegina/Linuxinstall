@@ -1,7 +1,8 @@
 #!/bin/bash
 SRCDIRS="/bin /boot /etc /home /lib /lib32 /lib64 /libx32 /root /sbin /usr/local /usr/src /var"
 NOBACKUPDIRS="/data /dev /home/data/nobackup /media /mnt /opt /proc /run /srv /sys /home/snapshots /tmp /var/run"
-DESTDIRS="/mnt/bakhome/data/mlc05/backup /mnt/lanas01_bakmlc5/data/mlc05/backup"
+#DESTDIRS="/mnt/bakhome/data/mlc05/backup /mnt/lanas01_bakmlc5/data/mlc05/backup"
+DESTDIRS="/mnt/bakhome/data/mlc05/backup"
 INFODIR="/root/logs/backup_infos"
 SNAPDIRS="/mnt/bakhome"    # ${i}/data --> ${i}/snapshots/snap_YYYYMMDD_hhmmss
                            # create subvolume ${i}/data first:
@@ -159,22 +160,19 @@ echo "---------------------------------------------------------------------"
 
 
 echo "---------------------------------------------------------------------"
+echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS start_of_backup" >> $INFODIR/last_backup.txt
 for dest_dir in $DESTDIRS; do
   if [ -e $dest_dir ] ; then
-    echo "$(date +%Y%m%d_%H%M%S) $dest_dir start_of_backup" >> $INFODIR/last_backup.txt
     makeBackupTo $dest_dir    
-    echo "$(date +%Y%m%d_%H%M%S) $dest_dir end_of_backup"   >> $INFODIR/last_backup.txt
   else
     echo DESTDIR $dest_dir does not exist
   fi
   echo
 done
 sleep 2s
-echo "---------------------------------------------------------------------"
 
-
-echo "---------------------------------------------------------------------"
 wait
+echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS end_of_backup"   >> $INFODIR/last_backup.txt
 echo "---------------------------------------------------------------------"
 
 

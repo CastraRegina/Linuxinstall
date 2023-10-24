@@ -63,4 +63,7 @@ fi
 ##############################################################################
 
 
+echo "To check the filesystem do..."
+echo "btrfsck --check --force /dev/mapper/${CRYPT_MAP}"
+echo "btrfs fi df ${MOUNTPOINT}"
 
