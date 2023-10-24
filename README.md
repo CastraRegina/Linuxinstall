@@ -793,6 +793,15 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   nvme endurance-log /dev/nvme0n1  # does not work 
   ```
 
+- Handling `btrfs`
+  ```
+  btrfs subvolume list /mnt/home
+  btrfs subvolume delete /mnt/home/snapshots/snap_20231024_081500
+  btrfs subvolume snapshot -r /home /home/snapshots/snap_20231024_081500
+  btrfs check --force /dev/mapper/crypt_home
+  btrfsck --check --force /dev/mapper/crypt_home
+  ```
+
 - Authenticator  
   Commandline tool to generate same output like *google's Authenticator*
   ```
