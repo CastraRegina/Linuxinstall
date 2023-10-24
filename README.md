@@ -456,7 +456,14 @@ TODO show:
   
 
 
-
+### Create regular snapshots of `/home`
+- copy `010_makeSnapshotOfHomeDaily.sh` to `/root/bin/`
+- modify root's crontab: `sudo crontab -e`
+  ```
+  0 * * * * /root/bin/010_makeSnapshotOfHomeDaily.sh
+  ```
+- The script is executed hourly and 
+  only creates a new snapshot if at the current day a snapshot has not been taken yet.
 
 
 
@@ -835,8 +842,8 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
 
 # TODOs / next steps
 bank: tinyraid1 + regular snapshots + auto-backup to USB-sticks  
-root: internal backup + regular snapshots  
-root: home regular snapshots  
+done root: internal backup + regular snapshots  
+done root: home regular snapshots  
 root: backup to NAS  
 fk: VM  
 
