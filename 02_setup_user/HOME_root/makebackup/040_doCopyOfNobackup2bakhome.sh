@@ -1,6 +1,7 @@
 #!/bin/bash
 SRCDIR="/home/data/nobackup/"
 DESTDIR="/mnt/bakhome/data/mlc05/nobackup/"
+INFODIR="/root/logs/backup_infos"
  
 
 # ===================================================================
@@ -13,6 +14,7 @@ function checkIfDirsExist()
     if [ ! -e $DESTDIR ] ;then
       echo DESTDIR $DESTDIR does not exist
       echo "    bash ./020_mount_local_bakhome.sh mount" 
+      exit
     fi
 }
 
@@ -61,7 +63,9 @@ echo "---------------------------------------------------------------------"
 
 
 echo "---------------------------------------------------------------------"
+echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS start_of_nobackup" >> $INFODIR/last_nobackup.txt
 cpNobackup
+echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS end_of_nobackup" >> $INFODIR/last_nobackup.txt
 echo "---------------------------------------------------------------------"
 
 
