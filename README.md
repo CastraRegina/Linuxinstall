@@ -460,7 +460,7 @@ TODO show:
 - copy `010_makeSnapshotOfHomeDaily.sh` to `/root/bin/`
 - modify root's crontab: `sudo crontab -e`
   ```
-  0 * * * * /root/bin/010_makeSnapshotOfHomeDaily.sh
+  0 * * * * /bin/bash /root/bin/010_makeSnapshotOfHomeDaily.sh
   ```
 - The script is executed hourly and 
   only creates a new snapshot if at the current day a snapshot has not been taken yet.
@@ -735,6 +735,33 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   vncserver-virtual -kill :1
   cat ~/.vnc/*.pid
   ```
+
+
+### Setup VirtualBox
+- Settings "Expert Mode"  
+  - Name: ubuntu-22.04.3-BC  
+  - Folder: /data/nobackup/VMs  
+  - ISO: /data/nobackup/fk/isos/ubuntu-22.04.3-desktop-amd64.iso  
+  - Type: Linux
+  - Version: Ubuntu-64  
+  - RAM: 4096 MB  
+  - CPUs: 4
+  - HDD: 25GB  
+  - HDD-Type: VDI
+- Start  
+  - User: Install
+  - Name: MLC5-VB-ubuntu-22.04.3
+- Further Settings VM-Image
+  - General -> Advanced -> Shared-Clipboards: bidirectional  (but does not work)
+- Settings - Ubuntu  
+  - Display: 1920x1440
+  - Do a `sudo apt update && sudo apt upgrade`
+- Installation
+  - [BB-Software](https://bitbox.swiss/de/download/)  
+    Check checksum: `sha256sum BB.deb`   
+    Install deb-file: `sudo apt install BB.deb`
+
+  
 
 
 ---
