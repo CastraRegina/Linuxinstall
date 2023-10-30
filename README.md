@@ -320,6 +320,47 @@ sudo umount /mnt/bakhome
 ```
 
 
+### Create backup-SAN on NAS
+- On NAS use SAN-Manager:
+  - Create iSCSI-LUN: `Target-3`  
+    ... automatically creates `LUN-3`
+  - Result: `iqn.2000-01.com.synology:lanas01.Target-3.b0913d77d79`
+- On `mlc5`:
+  ```bash
+  export IP="192.168.2.5"
+  export PORTAL="${IP}:3260"
+  export TARGETNAME="iqn.2000-01.com.synology:lanas01.Target-1.46259ce278"
+  export TARGETNAME="iqn.2000-01.com.synology:lanas01.Target-2.b0913d77d79"
+  export TARGETNAME="iqn.2000-01.com.synology:lanas01.Target-3.b0913d77d79"
+  iscsiadm -m discovery -t st -p "${IP}" 
+  iscsiadm -m node
+  iscsiadm -m node --targetname "${TARGETNAME}" --portal "${PORTAL}" --login
+  dmesg # --> find device
+  cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 -v luksFormat /dev/sda
+  cryptsetup config --label="crypt_lanas01_bakmlc5" /dev/sda
+  cryptsetup luksDump /dev/sda
+  cryptsetup -v luksHeaderBackup /dev/sda --header-backup-file /root/encrypted_partitions_LUKS_backup/LUKSheaderbak_lanas01_bakmlc5.bin
+  ```
+  ```bash
+  cryptsetup luksOpen /dev/sda crypt_lanas01_bakmlc5
+  mkfs.btrfs -L "lanas01_bakmlc5" /dev/mapper/crypt_lanas01_bakmlc5
+  mkdir /mnt/lanas01_bakmlc5
+  mount /dev/mapper/crypt_lanas01_bakmlc5 /mnt/lanas01_bakmlc5 
+  btrfs fi df /mnt/lanas01_bakmlc5     # just to check systemdata&metadata=DUP
+  cd /mnt/lanas01_bakmlc5/
+  btrfs subvolume create /mnt/lanas01_bakmlc5/data
+  mkdir -p data/mlc05/backup
+  mkdir snapshots
+  ```
+  ```bash
+  umount /mnt/lanas01_bakmlc5
+  cryptsetup luksClose crypt_lanas01_bakmlc5
+  iscsiadm -m node --targetname "${TARGETNAME}" --portal "${PORTAL}" -u
+  iscsiadm -m node -o delete -T "${TARGETNAME}"
+  iscsiadm -m session
+  ```
+
+
 ### Create user accounts
 - User ids and names
   - 1000 - install
