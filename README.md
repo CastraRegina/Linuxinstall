@@ -387,18 +387,29 @@ Now `su www` or `su bank` should work without any password request for user `fk`
 
 
 ### Setup group `data` and `/data` folder
-```
+```bash
 sudo groupadd data   # create group 'data'
 sudo usermod -aG data install
 sudo usermod -aG data www
 sudo usermod -aG data fk
 sudo usermod -aG data bank
 ```
+```bash
+sudo groupadd private   # create group 'private'
+sudo usermod -aG private fk
+sudo usermod -aG private bank
 ```
+```bash
 sudo mkdir /home/data
 sudo chown root:data /home/data
 sudo chmod 750 /home/data/
 sudo ln -s /home/data /data
+```
+```bash
+sudo mkdir /home/data/documents
+sudo chown fk:private /home/data/documents
+sudo chmod 750 /home/data/documents
+sudo chmod g+s /home/data/documents
 ```
 TODO: define subfolder structure
 
