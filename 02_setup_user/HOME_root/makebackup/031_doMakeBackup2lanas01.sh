@@ -173,7 +173,7 @@ done
 sleep 2s
 
 wait
-echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS end_of_backup $0"   >> $INFODIR/last_backup.txt
+echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS end_of_backup   $0" >> $INFODIR/last_backup.txt
 echo "---------------------------------------------------------------------"
 
 
