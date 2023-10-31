@@ -3,9 +3,9 @@ SRCDIRS="/bin /boot /etc /home /lib /lib32 /lib64 /libx32 /root /sbin /usr/local
 SRCDIRS="/boot"
 NOBACKUPDIRS="/data /dev /home/data/nobackup /media /mnt /opt /proc /run /srv /sys /home/snapshots /tmp /var/run"
 #DESTDIRS="/mnt/bakhome/data/mlc05/backup /mnt/lanas01_bakmlc5/data/mlc05/backup"
-DESTDIRS="/mnt/bakhome/data/mlc05/backup"
+DESTDIRS="/mnt/lanas01_bakmlc5/data/mlc05/backup"
 INFODIR="/root/logs/backup_infos"
-SNAPDIRS="/mnt/bakhome"          # ${i}/data --> ${i}/snapshots/snap_YYYYMMDD_hhmmss
+SNAPDIRS="/mnt/lanas01_bakmlc5"  # ${i}/data --> ${i}/snapshots/snap_YYYYMMDD_hhmmss
                                  # create subvolume ${i}/data first:
                                  #   btrfs subvolume create ${i}/data
 

@@ -63,9 +63,9 @@ echo "---------------------------------------------------------------------"
 
 
 echo "---------------------------------------------------------------------"
-echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS start_of_nobackup" >> $INFODIR/last_nobackup.txt
+echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS start_of_nobackup $0" >> $INFODIR/last_nobackup.txt
 cpNobackup
-echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS end_of_nobackup" >> $INFODIR/last_nobackup.txt
+echo "$(date +%Y%m%d_%H%M%S) $DESTDIRS end_of_nobackup   $0" >> $INFODIR/last_nobackup.txt
 echo "---------------------------------------------------------------------"
 
 
