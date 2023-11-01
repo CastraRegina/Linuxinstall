@@ -427,7 +427,14 @@ Now `su www` or `su bank` should work without any password request for user `fk`
 
 
 
-### Setup group `data` and `/data` folder
+### Setup groups `data`, `users`, `private` and `/data`-folder
+```bash
+# add users to group 'users'
+sudo usermod -aG users install
+sudo usermod -aG users www
+sudo usermod -aG users fk
+sudo usermod -aG users bank
+```
 ```bash
 sudo groupadd data   # create group 'data'
 sudo usermod -aG data install
