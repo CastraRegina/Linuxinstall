@@ -674,9 +674,11 @@ see section [Switch user account without password](#switch-user-account-without-
   - Todo Tree (Gruntfuggly.todo-tree)
   - Flake8 (ms-python.flake8)
   - autopep8 (ms-python.autopep8)
+  - Black (ms-python.black-formatter)
 - Setup / modify settings (`File->Preferences->Settings [Ctrl+,]`):
   - Editor: Format On Save: check-on
-  - Editor: Default Formatter: Python (ms-python.python)
+  - Editor: Default Formatter: ~~Python (ms-python.python)~~
+      Black Formatter(ms-python.black-formatter)
   - Python > Analysis: Type Checking Mode: basic
   - Python Select Interpreter: `./venv/bin/python`
   - Edit `$HOME/.config/Code/User/settings.json`:  
@@ -686,13 +688,13 @@ see section [Switch user account without password](#switch-user-account-without-
         "workbench.colorTheme": "Default Dark Modern",
         "window.zoomLevel": 1,
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "ms-python.python",
+        "editor.defaultFormatter": "ms-python.black-formatter",
         "python.analysis.typeCheckingMode": "basic",
         "python.defaultInterpreterPath": "./venv/bin/python",
-        "python.linting.flake8Enabled": true,
         "editor.rulers": [
             79,
-            100
+            100,
+            120
         ],
         "redhat.telemetry.enabled": false,
         "[xml]": {
