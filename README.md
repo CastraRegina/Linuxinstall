@@ -693,6 +693,7 @@ see section [Switch user account without password](#switch-user-account-without-
         "python.defaultInterpreterPath": "./venv/bin/python",
         "editor.rulers": [
             79,
+            88,
             100,
             120
         ],
