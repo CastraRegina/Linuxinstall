@@ -681,7 +681,9 @@ see section [Switch user account without password](#switch-user-account-without-
       Black Formatter(ms-python.black-formatter)
   - Python > Analysis: Type Checking Mode: basic
   - Python Select Interpreter: `./venv/bin/python`
-  - Edit `$HOME/.config/Code/User/settings.json`:  
+  - Edit `$HOME/.config/Code/User/settings.json` /  
+    `%APPDATA%\Code\User\settings.json` /  
+    `C:\Users\<user>\AppData\Code\User\settings.json`:  
 
     ```json
     {
@@ -703,7 +705,11 @@ see section [Switch user account without password](#switch-user-account-without-
         },
         "[python]": {
             "editor.formatOnType": true
-        }
+        },
+        "flake8.interpreter": [
+            "--max-line-length=88"
+        ],
+        "cSpell.diagnosticLevel": "Hint"
     }
     ```
 
