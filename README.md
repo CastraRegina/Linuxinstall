@@ -272,10 +272,67 @@ See [Unlocking Encrypted Home Partition on Login](https://www.doof.me.uk/2019/09
   ```
 
 ### Create raid1 `/mnt/tinyraid1`
-Only user `bank` should automount & decrypt the two partitions on both disks.
+Objective: Create a `raid1` using btrfs based on the encrypted partitions `/dev/nvme0n1p6` and `/dev/nvme1n1p7`.  
+~~Only user `bank` should automount & decrypt the two partitions on both disks.~~  
+See analog approach: [https://gist.github.com/MaxXor/ba1665f47d56c24018a943bb114640d7](https://gist.github.com/MaxXor/ba1665f47d56c24018a943bb114640d7) 
 
-See [https://gist.github.com/MaxXor/ba1665f47d56c24018a943bb114640d7](https://gist.github.com/MaxXor/ba1665f47d56c24018a943bb114640d7)  
-TODO
+Create encrypted partitions:
+
+```bash
+cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 -v luksFormat /dev/nvme0n1p6
+cryptsetup --cipher aes-xts-plain64 --key-size 512 --hash sha512 -v luksFormat /dev/nvme1n1p7
+```
+```bash
+cryptsetup config --label="crypt_tinyraid1_d0" /dev/nvme0n1p6
+cryptsetup config --label="crypt_tinyraid1_d1" /dev/nvme1n1p7
+```
+```bash
+cryptsetup luksDump /dev/nvme0n1p6 
+cryptsetup luksDump /dev/nvme1n1p7 
+```
+```bash
+cryptsetup -v luksHeaderBackup /dev/nvme0n1p6 --header-backup-file /root/encrypted_partitions_LUKS_backup/LUKSheaderbak_nvme0n1p6_tinyraid1_d0.bin
+cryptsetup -v luksHeaderBackup /dev/nvme1n1p7 --header-backup-file /root/encrypted_partitions_LUKS_backup/LUKSheaderbak_nvme1n1p7_tinyraid1_d1.bin
+```
+
+Create `btrfs-raid1` partition:
+```bash
+cryptsetup luksOpen /dev/nvme0n1p6 crypt_tinyraid1_d0
+cryptsetup luksOpen /dev/nvme1n1p7 crypt_tinyraid1_d1
+mkfs.btrfs -L "tinyraid1" -d raid1 -m raid1 /dev/mapper/crypt_tinyraid1_d0 /dev/mapper/crypt_tinyraid1_d1
+```
+Mount partition:
+```bash
+mkdir /mnt/tinyraid1
+mount /dev/mapper/crypt_tinyraid1_d0 /mnt/tinyraid1
+```
+First setup:
+```bash
+chgrp private /mnt/tinyraid1/
+chmod g+rwxs /mnt/tinyraid1/
+chmod o-rwxs /mnt/tinyraid1/
+
+mkdir /mnt/tinyraid1/snapshots
+btrfs subvolume snapshot -r /mnt/tinyraid1 /mnt/tinyraid1/snapshots/snapshot_20231217_100700
+```
+Automount setup: Update `/etc/crypttab`
+```bash
+# get UUID (of /dev/nvme0n1p6 & /dev/nvme1n1p7) from blkid
+crypt_tinyraid1_d0      UUID=680a904f-fda4-4e24-b5ff-86f0b2137bb5               none            luks,discard,noauto
+crypt_tinyraid1_d1      UUID=3e9236c0-db9d-4d40-a315-23bb1c05f5d5               none            luks,discard,noauto
+```
+Automount setup: Update `/etc/security/pam_mount.conf.xml` for user `bank`
+```bash
+# get PARTUUID (of /dev/nvme0n1p6) from blkid
+<volume user="fk" fstype="crypt" path="/dev/disk/by-partuuid/968e4583-1ca9-42a6-81b1-45eade2d7f18" mountpoint="crypt_tinyraid1_d0" />
+<volume user="fk" fstype="crypt" path="/dev/disk/by-partuuid/c49b61e3-94d0-4dbf-92a1-127076634bf2" mountpoint="crypt_tinyraid1_d1" />
+<volume user="fk" fstype="auto" path="/dev/mapper/crypt_tinyraid1_d0" mountpoint="/mnt/tinyraid1" options="defaults,relatime,discard" />
+```
+Do an automatic snapshot once a day: See 
+  [Create regular snapshots](#Create-regular-snapshots)  
+ 
+
+
 
 ### Convert ext4 partition to btrfs
 ```
@@ -515,11 +572,12 @@ TODO show:
   
 
 
-### Create regular snapshots of `/home`
-- copy `010_makeSnapshotOfHomeDaily.sh` to `/root/bin/`
+### Create regular snapshots
+- copy `010_makeSnapshot.sh` to `/root/bin/`
 - modify root's crontab: `sudo crontab -e`
   ```
-  0 * * * * /bin/bash /root/bin/010_makeSnapshotOfHomeDaily.sh
+  0 * * * * /bin/bash /root/bin/010_makeSnapshotDaily.sh /home /home/snapshots
+  0 * * * * /bin/bash /root/bin/010_makeSnapshotDaily.sh /mnt/tinyraid1 /mnt/tinyraid1/snapshots
   ```
 - The script is executed hourly and 
   only creates a new snapshot if at the current day a snapshot has not been taken yet.
@@ -675,6 +733,7 @@ see section [Switch user account without password](#switch-user-account-without-
   - Flake8 (ms-python.flake8)
   - autopep8 (ms-python.autopep8)
   - Black (ms-python.black-formatter)
+  - Bito AI Code Assistant (Bito.Bito)
 - Setup / modify settings (`File->Preferences->Settings [Ctrl+,]`):
   - Editor: Format On Save: check-on
   - Editor: Default Formatter: ~~Python (ms-python.python)~~
