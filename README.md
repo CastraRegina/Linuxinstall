@@ -730,7 +730,7 @@ see section [Switch user account without password](#switch-user-account-without-
   - XML (redhat.vscode-xml)
   - Code Spell Checker (streetsidesoftware.code-spell-checker)
   - Todo Tree (Gruntfuggly.todo-tree)
-  - Flake8 (ms-python.flake8)
+  - Flake8 (ms-python.flake8) (disabled)
   - autopep8 (ms-python.autopep8)
   - Black (ms-python.black-formatter)
   - Bito AI Code Assistant (Bito.Bito)
@@ -765,10 +765,19 @@ see section [Switch user account without password](#switch-user-account-without-
         "[python]": {
             "editor.formatOnType": true
         },
-        "flake8.interpreter": [
-            "--max-line-length=88"
+        "cSpell.diagnosticLevel": "Hint",
+        "black-formatter.args": [
+            "--line-length=100"
         ],
-        "cSpell.diagnosticLevel": "Hint"
+        "flake8.interpreter": [
+            "--max-line-length=100"
+        ],
+        "pylint.args": [
+            "--max-line-length=100"
+        ],
+        "autopep8.args": [
+            "--max-line-length=100"
+        ]
     }
     ```
 
