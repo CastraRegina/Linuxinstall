@@ -725,6 +725,7 @@ see section [Switch user account without password](#switch-user-account-without-
   - autoDocstring - Python Docstring Generator (njpwerner.autodocstring)
   - Pylance (ms-python.vscode-pylance) (seems to be already installed by ms-python.python)
   - Pylint (ms-python.pylint)
+  - isort (ms-python.isort)
   - GitLens - Git supercharged (eamodio.gitlens) (if it is really needed?)
   - Markdown Preview Mermaid Support (bierner.markdown-mermaid) for diagrams and flowcharts
   - XML (redhat.vscode-xml)
@@ -747,9 +748,6 @@ see section [Switch user account without password](#switch-user-account-without-
     ```json
     {
         "workbench.colorTheme": "Default Dark Modern",
-        "window.zoomLevel": 1,
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "ms-python.black-formatter",
         "python.analysis.typeCheckingMode": "basic",
         "python.defaultInterpreterPath": "./venv/bin/python",
         "editor.rulers": [
@@ -765,6 +763,16 @@ see section [Switch user account without password](#switch-user-account-without-
         "[python]": {
             "editor.formatOnType": true
         },
+        "[python]": {
+            "editor.defaultFormatter": "ms-python.black-formatter",
+            "editor.formatOnSave": true,
+            "editor.formatOnType": true,
+            "editor.codeActionsOnSave": {
+                "source.organizeImports": true
+            },
+          },
+          "isort.args":["--profile", "black"],
+
         "cSpell.diagnosticLevel": "Hint",
         "black-formatter.args": [
             "--line-length=100"
@@ -777,7 +785,8 @@ see section [Switch user account without password](#switch-user-account-without-
         ],
         "autopep8.args": [
             "--max-line-length=100"
-        ]
+        ],
+        "window.zoomLevel": 1
     }
     ```
 
