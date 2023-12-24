@@ -761,14 +761,11 @@ see section [Switch user account without password](#switch-user-account-without-
             "editor.defaultFormatter": "redhat.vscode-xml"
         },
         "[python]": {
-            "editor.formatOnType": true
-        },
-        "[python]": {
             "editor.defaultFormatter": "ms-python.black-formatter",
             "editor.formatOnSave": true,
             "editor.formatOnType": true,
             "editor.codeActionsOnSave": {
-                "source.organizeImports": true
+                "source.organizeImports": "explicit"
             },
           },
           "isort.args":["--profile", "black"],
