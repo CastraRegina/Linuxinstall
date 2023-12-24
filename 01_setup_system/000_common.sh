@@ -60,7 +60,7 @@ export _SW2INSTALL="$_SW2INSTALL liblapack-doc liblapack-dev liblapack-doc-man l
 export _SW2INSTALL="$_SW2INSTALL libxext-doc iperf aptitude firefox-esr samba samba-common-bin smbclient"
 export _SW2INSTALL="$_SW2INSTALL btrfs-progs btrfs-tools python-dev python-pip ffmpeg libffi-dev libxml2-dev"
 export _SW2INSTALL="$_SW2INSTALL libxslt-dev libcairo2 libgeos++-dev libgeos-dev libgeos-doc libjpeg-dev"
-export _SW2INSTALL="$_SW2INSTALL libtiff5-dev libjpeg8-dev libopenjp2-7-dev liblcms2-dev libwebp-dev"
+export _SW2INSTALL="$_SW2INSTALL libtiff5-dev libjpeg-turbo8-dev libopenjp2-7-dev liblcms2-dev libwebp-dev"
 export _SW2INSTALL="$_SW2INSTALL tcl8.6-dev tk8.6-dev python3-tk libharfbuzz-dev libfribidi-dev libxcb1-dev"
 export _SW2INSTALL="$_SW2INSTALL libpng-dev libfreetype6-dev libgif-dev libgtk-3-dev libxml2-dev libpango1.0-dev"
 export _SW2INSTALL="$_SW2INSTALL libcairo2-dev libspiro-dev python3-dev ninja-build cmake build-essential gettext"
@@ -71,6 +71,10 @@ export _SW2INSTALL="$_SW2INSTALL openssh-server fdupes"
 export _SW2INSTALL="$_SW2INSTALL python3-pip-whl python3-setuptools-whl python3.10-venv"
 export _SW2INSTALL="$_SW2INSTALL fontforge fontforge-common  libfontforge4 fontforge-doc fontforge-extras"
 export _SW2INSTALL="$_SW2INSTALL python3-fontforge fonts-cantarell fonts-inconsolata libuninameslist1 potrace"
+
+### use libjpeg-turbo8-dev instead of libjpeg8-dev
+
+
 
 # -------------------------------------------------------------------------------
 # Create log & bin path, if path does not yet exist
