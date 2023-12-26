@@ -894,14 +894,28 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   - User: Install
   - Name: MLC5-VB-ubuntu-22.04.3
 - Further Settings VM-Image
-  - General -> Advanced -> Shared-Clipboards: bidirectional  (but does not work)
+  - General -> Advanced -> Shared-Clipboards: bidirectional
+  - Mount shared folder: `/mnt/tinyraid1/BT`
 - Settings - Ubuntu  
   - Display: 1920x1440
   - Do a `sudo apt update && sudo apt upgrade`
 - Installation
+  - [Guest Additions - VBoxGuestAdditions.iso](https://www.virtualbox.org/manual/ch04.html)  
+    *Guest Additions* is mandatory for working *Clipboard Copy&Paste* and to mount shared folders.
+    - Make sure iso file is already available  
+      ```bash
+      sudo apt install virtualbox-guest-additions-iso
+      ```
+    - Mount the `Optical Drives` from the `Devices` menu
+    - Start host system and execute as root...
+      ```bash
+      cd /media/install/VBox_GAs_7.0.12
+      sudo su -
+      bash ./VBoxLinuxAdditions.run 
+      ```
   - [BB-Software](https://bitbox.swiss/de/download/)  
-    Check checksum: `sha256sum BB.deb`   
-    Install deb-file: `sudo apt install BB.deb`
+    - Check checksum: `sha256sum BB.deb`   
+    - Install deb-file: `sudo apt install BB.deb`
 
   
 
