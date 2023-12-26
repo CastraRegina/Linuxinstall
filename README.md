@@ -891,7 +891,7 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   - HDD: 25GB  
   - HDD-Type: VDI
 - Start  
-  - User: Install
+  - User: install
   - Name: MLC5-VB-ubuntu-22.04.3
 - Further Settings VM-Image
   - General -> Advanced -> Shared-Clipboards: bidirectional
@@ -901,7 +901,7 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   - Do a `sudo apt update && sudo apt upgrade`
 - Installation
   - [Guest Additions - VBoxGuestAdditions.iso](https://www.virtualbox.org/manual/ch04.html)  
-    *Guest Additions* is mandatory for working *Clipboard Copy&Paste* and to mount shared folders.
+    *Guest Additions* is mandatory for working *Clipboard Copy&Paste* and to use shared folders.
     - Make sure iso file is already available  
       ```bash
       sudo apt install virtualbox-guest-additions-iso
@@ -912,6 +912,7 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
       cd /media/install/VBox_GAs_7.0.12
       sudo su -
       bash ./VBoxLinuxAdditions.run 
+      adduser install vboxsf  # ... to access shared folders
       ```
   - [BB-Software](https://bitbox.swiss/de/download/)  
     - Check checksum: `sha256sum BB.deb`   
