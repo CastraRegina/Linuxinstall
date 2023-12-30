@@ -902,21 +902,72 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
 - Installation
   - [Guest Additions - VBoxGuestAdditions.iso](https://www.virtualbox.org/manual/ch04.html)  
     *Guest Additions* is mandatory for working *Clipboard Copy&Paste* and to use shared folders.
-    - Make sure iso file is already available  
+    - Make sure iso file is already available on host system  
       ```bash
       sudo apt install virtualbox-guest-additions-iso
       ```
     - Mount the `Optical Drives` from the `Devices` menu
-    - Start host system and execute as root...
+    - Start guest system and execute as root...
       ```bash
       cd /media/install/VBox_GAs_7.0.12
       sudo su -
       bash ./VBoxLinuxAdditions.run 
       adduser install vboxsf  # ... to access shared folders
       ```
-  - [BB-Software](https://bitbox.swiss/de/download/)  
+  - [Bitbox Software](https://bitbox.swiss/de/download/)  
     - Check checksum: `sha256sum BB.deb`   
     - Install deb-file: `sudo apt install BB.deb`
+  - [Electrum Software](https://electrum.org/#download)
+    - Python Packages
+      ```bash
+      sudo apt install -y python3-pip python3-setuptools python3-pyqt5 libsecp256k1-dev python3-cryptography python3-setuptools python3-pip libusb-1.0-0-dev libudev-dev python3-venv
+      ```
+    - Create directory `electrum` and change into it
+      ```bash
+      mkdir electrum
+      cd electrum
+      ```
+    - Download Software and verify
+      ```bash
+      wget https://download.electrum.org/4.4.6/Electrum-4.4.6.tar.gz
+      wget https://download.electrum.org/4.4.6/Electrum-4.4.6.tar.gz.asc
+      wget https://raw.githubusercontent.com/spesmilo/electrum/master/pubkeys/ThomasV.asc
+      gpg --import ThomasV.asc
+      gpg --verify Electrum-4.4.6.tar.gz.asc
+      tar -xvf Electrum-4.4.6.tar.gz
+      ```
+    - Bitbox settings
+      ```bash
+      printf "SUBSYSTEM==\"usb\", TAG+=\"uaccess\", TAG+=\"udev-acl\", SYMLINK+=\"bitbox02_%%n\", ATTRS{idVendor}==\"03eb\", ATTRS{idProduct}==\"2403\"\n" > /etc/udev/rules.d/53-hid-bitbox02.rules
+      printf "KERNEL==\"hidraw*\", SUBSYSTEM==\"hidraw\", ATTRS{idVendor}==\"03eb\", ATTRS{idProduct}==\"2403\", TAG+=\"uaccess\", TAG+=\"udev-acl\", SYMLINK+=\"bitbox02-%%n\"\n" > /etc/udev/rules.d/54-hid-bitbox02.rules
+
+      udevadm control --reload
+      udevadm trigger
+      ```
+    - Create python-virtual-environment
+      ```bash
+      python3 -m venv venv
+      ```
+    - Activate python-virtual-environment
+      ```bash
+      . venv/bin/activate
+      which python3
+      ```
+    - Install required python modules
+      ```bash
+      wget https://github.com/spesmilo/electrum/raw/master/contrib/requirements/requirements.txt
+      wget https://github.com/spesmilo/electrum/raw/master/contrib/requirements/requirements-hw.txt
+      wget https://github.com/spesmilo/electrum/raw/master/contrib/requirements/requirements-binaries.txt
+
+      python3 -m pip install -r requirements.txt
+      python3 -m pip install -r requirements-hw.txt
+      python3 -m pip install -r requirements-binaries.txt
+      ```
+    - Run without installation
+      ```bash
+      python3 Electrum-4.4.6/run_electrum
+      ```
+    
 
   
 
