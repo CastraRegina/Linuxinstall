@@ -975,7 +975,7 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
 ---
 ---
 ## HowTos, infos and command examples
-- Encrypt an USB-drive
+- Encrypt an USB-drive.  
   See e.g. [https://sorenpoulsen.com/encrypting-a-usb-flash-drive-on-ubuntu](https://sorenpoulsen.com/encrypting-a-usb-flash-drive-on-ubuntu)  
   Find mountpoint
   ```bash
