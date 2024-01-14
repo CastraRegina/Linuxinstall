@@ -975,6 +975,53 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
 ---
 ---
 ## HowTos, infos and command examples
+- Encrypt an USB-drive
+  See e.g. [https://sorenpoulsen.com/encrypting-a-usb-flash-drive-on-ubuntu](https://sorenpoulsen.com/encrypting-a-usb-flash-drive-on-ubuntu)  
+  Find mountpoint
+  ```bash
+  lsblk
+  dmesg
+  ```
+  Fill with random data
+  ```bash
+  USBPART=/dev/sda1
+  # dd if=/dev/urandom of=${USBPART} bs=4K
+  ```
+  Setup encryption
+  ```bash
+  cryptsetup -v --verify-passphrase luksFormat ${USBPART}
+  ```
+  Open encrypted partition
+  ```bash
+  cryptsetup luksOpen ${USBPART} usbdrive
+  ```
+  Format it
+  ```bash
+  mkfs.ext4 /dev/mapper/usbdrive
+  ```
+  Close the encrypted partition
+  ```bash
+  cryptsetup luksClose /dev/mapper/usbdrive
+  ```
+  
+
+- Make backup of `/mnt/tinyraid1` to usbdrive  
+  Make sure to create a folder `data` on the encrypted usbdrive!  
+  Insert usbdrive and enter password to decrypt it, then...
+  ```bash
+  SRCDIR="/mnt/tinyraid1"
+  SNAPSHOTDIR="/mnt/tinyraid1/snapshots"
+  DESTDIRS="/media/fk/eaf1e9fa-e085-4ed6-87ce-bd5f924cdf25/data /media/fk/6153ad40-0940-4118-9562-5a17286a5591/data"
+  
+  for DESTDIR in ${DESTDIRS} ; do 
+    if [ -e ${DESTDIR} ] ; then
+      time rdiff-backup --exclude ${SNAPSHOTDIR} --include ${SRCDIR} --exclude '**' / ${DESTDIR}
+      df -h ${DESTDIR}
+    fi
+  done
+  ``` 
+
+
 - Mount NAS
   ```
   sudo mount -t cifs //192.168.2.5/test /mnt/lanas01_test -o username=test,uid=$(id -u),gid=$(id -g)
