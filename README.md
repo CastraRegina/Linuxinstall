@@ -538,6 +538,15 @@ sudo cryptsetup config --label="crypt_bakhome" /dev/nvme1n1p4
 ```
 
 
+### Set `/tmp` to be mounted with `exec` mount option
+If `TUXEDO control center` does not start and showing a message that the `tccd` service is not running,
+then make sure that `/tmp` is mounted with `exec`-mount-option to permit execution of binaries.  
+See entry in `/etc/fstab`:
+```bash
+tmpfs /tmp tmpfs defaults,noatime,nosuid,nodev,exec,mode=1777,size=8192M 0 0
+```
+
+
 ### Content of modified files
 TODO show:  
 - /etc/fstab
