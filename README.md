@@ -743,6 +743,7 @@ see section [Switch user account without password](#switch-user-account-without-
   - Flake8 (ms-python.flake8) (disabled)
   - autopep8 (ms-python.autopep8)
   - Black (ms-python.black-formatter)
+  - Outline Map (Gerrnperl.outline-map)
   - Bito AI Code Assistant (Bito.Bito)
 - Setup / modify settings (`File->Preferences->Settings [Ctrl+,]`):
   - Editor: Format On Save: check-on
