@@ -801,10 +801,12 @@ see section [Switch user account without password](#switch-user-account-without-
     - `Crtl+RETURN`  Python: Run Python File in Terminal
 
 - Helpful Keyboard Shortcuts (`File->Preferences->Keyboard Shortcuts [Ctrl+K Ctrl+S]`, `keybindings.json`)
-  - `Ctrl+Shift+P` to open the Command Palette
-  - `Crtl+Shift+7` Fold All Block Comments
-  - `Crtl+x`       Remove whole line (if nothing is selected)
-  - `Crtl+RETURN`  Python: Run Python File in Terminal (assigned by using `Ctrl+Shift+P`)  
+  - `Ctrl + Shift + P` Open the Command Palette
+  - `Ctrl + ,`         Open and search *Settings*
+  - `Crtl + x`         Remove whole line (if nothing is selected)
+  - `Crtl + RETURN`    Python: Run Python File in Terminal (assigned by using `Ctrl+Shift+P`)  
+  - `Crtl + Shift + 7` Fold All Block Comments
+  - `Ctrl + Alt + -`   Navigate back
 
 
 ### Setup ssh github access
