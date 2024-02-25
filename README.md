@@ -1019,7 +1019,8 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
 
 - Make backup of `/mnt/tinyraid1` to usbdrive  
   Make sure to create a folder `data` on the encrypted usbdrive!  
-  Insert usbdrive and enter password to decrypt it, then...
+  Insert usbdrive and enter password to decrypt it, then
+  execute following lines as `root`:
   ```bash
   SRCDIR="/mnt/tinyraid1"
   SNAPSHOTDIR="/mnt/tinyraid1/snapshots"
