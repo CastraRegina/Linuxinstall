@@ -929,6 +929,7 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   - [Bitbox Software](https://bitbox.swiss/de/download/)  
     - Check checksum: `sha256sum BB.deb`   
     - Install deb-file: `sudo apt install BB.deb`
+    - Check firmware: [https://github.com/digitalbitbox/bitbox02-firmware/releases/](https://github.com/digitalbitbox/bitbox02-firmware/releases/)
   - [Electrum Software](https://electrum.org/#download)
     - Python Packages
       ```bash
