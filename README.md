@@ -793,7 +793,10 @@ see section [Switch user account without password](#switch-user-account-without-
         "autopep8.args": [
             "--max-line-length=100"
         ],
-        "window.zoomLevel": 1
+        "window.zoomLevel": 1,
+        "bitoAI.codeCompletion.enableAutoCompletion": false,
+        "bitoAI.codeCompletion.enableCommentToCode": true,
+        "editor.inlineSuggest.showToolbar": "onHover"
     }
     ```
 
