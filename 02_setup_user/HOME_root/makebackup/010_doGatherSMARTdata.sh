@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 export _DEVICES="/dev/nvme0n1 /dev/nvme1n1"
 export _LOG_FOLDER="$HOME/logs/disk_infos/"
