@@ -1135,6 +1135,11 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   cat README.md | iconv -f utf-8 -t ascii//TRANSLIT > output.txt
   ```
 
+- Find all `crypt_*`-folders (as `root`):
+  ```
+  find / -path /home/snapshots -prune -o -name "crypt_*" -type d
+  ```
+
 ### Infos
 - Access BIOS and boot menu
   - BIOS: F2 or (ESC)
