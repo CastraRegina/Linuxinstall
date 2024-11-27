@@ -679,6 +679,21 @@ ln -s /data/git/Linuxinstall/02_setup_user/HOME_root/makebackup $HOME/makebackup
   - Dateien und Anwendungen
     - Downloads: create sub-folder of this year, e.g. `$HOME/Downloads/2023`
 
+  - Add AddOn `Video DownloadHelper`
+    - Install CoApp (as user `www`)
+      ```
+      curl -sSLf https://github.com/aclap-dev/vdhcoapp/releases/latest/download/install.sh | bash
+      ```
+      Setup
+      ```
+      sudo apt-get install -y flatpak
+      flatpak permission-set webextensions net.downloadhelper.coapp snap.firefox yes
+      ```
+      ```
+      ~/.local/share/vdhcoapp/vdhcoapp install
+      ~/.local/share/vdhcoapp/vdhcoapp --info
+      ```
+
 
 
 ### Execute user setup scripts
