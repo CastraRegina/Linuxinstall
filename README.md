@@ -736,7 +736,9 @@ It should start without asking for a password if above configurations were done 
 see section [Switch user account without password](#switch-user-account-without-password).
 
 
-### Customize Visual Code
+### Customize Visual Code (outdated)
+For latests infos please check *VS Code* settings of a project like
+[https://github.com/CastraRegina/ars-est-in-v_rb0](https://github.com/CastraRegina/ars-est-in-v_rb0)
 
 - Help --> Welcome
   Choose the look you want: Dark Modern 
