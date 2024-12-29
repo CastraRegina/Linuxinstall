@@ -1,0 +1,17 @@
+[Desktop Entry]
+Comment[de_DE]=
+Comment=
+Exec=/home/fk/bin/start_dolphin_as_user.sh bank /home/bank/Downloads
+GenericName[de_DE]=
+GenericName=
+Icon=stock_folder
+MimeType=
+Name[de_DE]=dolphin_bank
+Name=dolphin_bank
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
