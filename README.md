@@ -1012,13 +1012,38 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   See e.g. [https://sorenpoulsen.com/encrypting-a-usb-flash-drive-on-ubuntu](https://sorenpoulsen.com/encrypting-a-usb-flash-drive-on-ubuntu)  
   Find mountpoint
   ```bash
-  lsblk
   dmesg
   ```
-  Fill with random data
+  or
+  ```bash
+  lsblk
+  ```
+  E.g. for `/dev/sda` do...  
+  Clean the partition table
+  ```bash
+  sudo wipefs -a /dev/sda
+  ```
+  Additionally to fully overwrite the disk:
+  ```bash
+  sudo dd if=/dev/zero of=/dev/sda bs=1M count=100
+  ```
+  Create GPT Partition Table:
+  ```bash
+  sudo parted /dev/sda mklabel gpt
+  ```
+  Create a single large partition that spans the entire disk:
+  ```bash
+  sudo parted -a optimal /dev/sda mkpart primary 0% 100%
+  ```  
+  Fill with random data  
+  Remark: If connected remotely maybe `screen` would be beneficial before starting the `dd` command.
   ```bash
   USBPART=/dev/sda1
-  # dd if=/dev/urandom of=${USBPART} bs=4K
+  ## time sudo dd if=/dev/urandom of=${USBPART} bs=4K status=progress
+  ### alternative method (faster):
+  # time sudo shred -v -n 1 ${USBPART}
+  ### alternative method (faster but not that random (but you need 64-bit-support)):
+  ## time sudo badblocks -c 10240 -s -w -t random -v ${USBPART}
   ```
   Setup encryption
   ```bash
@@ -1030,7 +1055,8 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   ```
   Format it
   ```bash
-  mkfs.ext4 /dev/mapper/usbdrive
+  # mkfs.ext4 /dev/mapper/usbdrive
+  mkfs.btrfs /dev/mapper/usbdrive
   ```
   Close the encrypted partition
   ```bash
