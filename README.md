@@ -1058,11 +1058,22 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   # mkfs.ext4 /dev/mapper/usbdrive
   mkfs.btrfs /dev/mapper/usbdrive
   ```
+  For testing purpose write some files with random data on disk
+  ```bash
+  time for i in {1..200000}; do echo -n "$(printf "%06d" $i) "; df -h . | tail -n +2; dd if=/dev/urandom of=data_$(printf "%06d" $i) bs=1M count=100 status=none; done
+  ```
   Close the encrypted partition
   ```bash
   cryptsetup luksClose /dev/mapper/usbdrive
   ```
   
+  
+  If the usbdrive is for a general backup then create a btrfs-subvolume `data` together with its subfolders and also create the `snapshots` folder , e.g.
+  ```bash
+  btrfs subvolume create /media/fk/6f99a555-c04a-4f2b-83cb-97a27de80f06/data
+  mkdir -p /media/fk/6f99a555-c04a-4f2b-83cb-97a27de80f06/data/mlc05/backup/
+  mkdir -p /media/fk/6f99a555-c04a-4f2b-83cb-97a27de80f06/snapshots/
+  ```
 
 - Make backup of `/mnt/tinyraid1` to usbdrive  
   Make sure to create a folder `data` on the encrypted usbdrive!  
