@@ -182,7 +182,6 @@ echo "---------------------------------------------------------------------"
 
 date
 
-for SNAPDIR in ${SNAPDIRS} ; do echo -n "" ; done
 echo "====================================================================="
 echo "--- next: please umount and close the encryption --------------------"
 echo "      020_mount_local_bakhome.sh umount"
