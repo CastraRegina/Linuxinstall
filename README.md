@@ -596,6 +596,38 @@ TODO show:
 
 
 
+### What to do after a system upgrade
+
+Just execute the `/data/git/Linuxinstall/01_setup_system/010_install_packages.sh`
+
+Further steps could be:
+
+```bash
+sudo apt-get update
+sudo apt-get install dselect
+```
+```bash
+sodo cp -i /root/logs/backup_infos/debian_package_selections.txt /root/logs/backup_infos/debian_package_selections_copy.txt
+```
+Remove all entries in `debian_package_selections_copy.txt` that dselect complains about when running:
+```bash
+sudo dpkg --set-selections < /root/logs/backup_infos/debian_package_selections_copy.txt 
+```
+
+
+
+If you've run `sudo dpkg --clear-selections` and want to keep your currently installed packages, you should run this command immediately:
+```bash
+dpkg --get-selections | sed -e 's/deinstall/install/' | sudo dpkg --set-selections
+sudo apt-get dselect-upgrade
+```
+
+To save the package versions too:
+```bash
+dpkg -l | grep "^ii" > installed_packages_with_versions.txt
+```
+
+
 
 
 
