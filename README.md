@@ -985,7 +985,7 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   - [Electrum Software](https://electrum.org/#download)
     - Python Packages
       ```bash
-      sudo apt install -y python3-pip python3-setuptools python3-pyqt5 libsecp256k1-dev python3-cryptography python3-setuptools python3-pip libusb-1.0-0-dev libudev-dev python3-venv
+      sudo apt install -y python3-pip python3-setuptools python3-pyqt5 libsecp256k1-dev python3-cryptography python3-setuptools python3-pip libusb-1.0-0-dev libudev-dev python3-venv autoconf automake libtool build-essential
       ```
     - Create directory `electrum` and change into it
       ```bash
@@ -994,12 +994,14 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
       ```
     - Download Software and verify
       ```bash
-      wget https://download.electrum.org/4.4.6/Electrum-4.4.6.tar.gz
-      wget https://download.electrum.org/4.4.6/Electrum-4.4.6.tar.gz.asc
+      wget https://download.electrum.org/4.4.2/Electrum-4.4.2.tar.gz
+      wget https://download.electrum.org/4.4.2/Electrum-4.4.2.tar.gz.asc
       wget https://raw.githubusercontent.com/spesmilo/electrum/master/pubkeys/ThomasV.asc
       gpg --import ThomasV.asc
-      gpg --verify Electrum-4.4.6.tar.gz.asc
-      tar -xvf Electrum-4.4.6.tar.gz
+      gpg --verify Electrum-4.4.2.tar.gz.asc
+      ```
+      ```bash
+      tar -xvf Electrum-4.4.2.tar.gz
       ```
     - Bitbox settings
       ```bash
@@ -1018,19 +1020,28 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
       . venv/bin/activate
       which python3
       ```
+    - Update python's pip, ...
+      ```bash
+      python3 -m pip install --upgrade pip setuptools wheel
+      ```
+      ```bash
+      python3 -m pip install PyQt5
+      ```
     - Install required python modules
       ```bash
       wget https://github.com/spesmilo/electrum/raw/master/contrib/requirements/requirements.txt
       wget https://github.com/spesmilo/electrum/raw/master/contrib/requirements/requirements-hw.txt
       wget https://github.com/spesmilo/electrum/raw/master/contrib/requirements/requirements-binaries.txt
-
+      ```
+      Uncomment the line with `btchip-python` as it is only for legacy and makes trouble.
+      ```bash
       python3 -m pip install -r requirements.txt
       python3 -m pip install -r requirements-hw.txt
       python3 -m pip install -r requirements-binaries.txt
       ```
     - Run without installation
       ```bash
-      python3 Electrum-4.4.6/run_electrum
+      python3 Electrum-4.4.2/run_electrum
       ```
     
 
