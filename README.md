@@ -1239,6 +1239,18 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
   find / -path /home/snapshots -prune -o -name "crypt_*" -type d
   ```
 
+- Handling pdf files: 
+  - Extract multiple ranges and individual pages
+    ``` bash
+    pdftk input.pdf cat 1-5 8 12-15 output combined_extract.pdf
+    ```
+  - Print two pages on one page using `pdfjam`
+    ``` bash
+    pdfjam --nup 2x1 --paper a4paper --landscape input.pdf --outfile output.pdf
+    ```
+
+
+
 ### Infos
 - Access BIOS and boot menu
   - BIOS: F2 or (ESC)
