@@ -33,15 +33,17 @@ PROCESSED_DIR="processed_pdfs"
 TMP_DIR=$(mktemp -d)
 SIZE_DATA_FILE="$TMP_DIR/size_data.txt"  # Temporary file for size data
 touch "$SIZE_DATA_FILE"  # Create the file upfront
-LEFT_MARGIN=20
-RIGHT_MARGIN=20
-TEXT_Y=816
-RECT_Y=812
-FONT_SIZE=11
-RECT_HEIGHT=$(awk "BEGIN {print $FONT_SIZE * 1.5}")  # Rectangle height is 1.5 * font size
-TEXT_X_OFFSET=2
-FILL_COLOR="1 1 1"  # White
-TEXT_COLOR="1 0 0"  # Red
+
+export MAX_LABEL_LENGTH=7 # Maximum label length to be taken from the PDF name
+export LEFT_MARGIN=20
+export RIGHT_MARGIN=20
+export TEXT_Y=814
+export RECT_Y=810
+export FONT_SIZE=11
+export RECT_HEIGHT=$(awk "BEGIN {print $FONT_SIZE * 1.5}")  # Rectangle height is 1.5 * font size
+export TEXT_X_OFFSET=2
+export FILL_COLOR="1 1 1"  # White
+export TEXT_COLOR="1 0 0"  # Red
 
 # Check for dependencies, including GNU parallel and Ghostscript
 check_dependencies() {
@@ -149,7 +151,10 @@ process_pdf() {
 annotate_pdf() {
     local pdf="$1"
     local label_text="${pdf##*/}"
-    label_text="${label_text:0:7}"
+    echo "Label text: $label_text    MAX_LABEL_LENGTH: $MAX_LABEL_LENGTH"
+    if [ ${#label_text} -gt $MAX_LABEL_LENGTH ]; then
+        label_text="${label_text:0:$MAX_LABEL_LENGTH}"
+    fi
     local annotated_pdf="$TMP_DIR/annotated_${pdf##*/}"
     local text_overlay="$TMP_DIR/overlay_${pdf##*/}"
     local temp_ps="$TMP_DIR/temp_${pdf##*/}.ps"
