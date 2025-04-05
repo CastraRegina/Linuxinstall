@@ -71,6 +71,7 @@ export _SW2INSTALL="$_SW2INSTALL openssh-server fdupes rename imagemagick imagem
 export _SW2INSTALL="$_SW2INSTALL python3-pip-whl python3-setuptools-whl python3.12-venv"
 export _SW2INSTALL="$_SW2INSTALL fontforge fontforge-common  libfontforge4 fontforge-doc fontforge-extras"
 export _SW2INSTALL="$_SW2INSTALL python3-fontforge fonts-cantarell fonts-inconsolata libuninameslist1 potrace"
+export _SW2INSTALL="$_SW2INSTALL poppler-utils ghostscript texlive-latex-extra texlive-extra-utils"
 
 ### use libjpeg-turbo8-dev instead of libjpeg8-dev
 
