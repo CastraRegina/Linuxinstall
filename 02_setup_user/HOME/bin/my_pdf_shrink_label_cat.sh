@@ -37,8 +37,8 @@ touch "$SIZE_DATA_FILE"  # Create the file upfront
 export MAX_LABEL_LENGTH=7 # Maximum label length to be taken from the PDF name
 export LEFT_MARGIN=20
 export RIGHT_MARGIN=20
-export TEXT_Y=814
-export RECT_Y=810
+export TEXT_Y=812
+export RECT_Y=808
 export FONT_SIZE=11
 export RECT_HEIGHT=$(awk "BEGIN {print $FONT_SIZE * 1.5}")  # Rectangle height is 1.5 * font size
 export TEXT_X_OFFSET=2
