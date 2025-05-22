@@ -1,14 +1,16 @@
 #!/bin/bash
 SRCDIRS="/bin /boot /etc /home /lib /lib32 /lib64 /libx32 /root /sbin /usr/local /usr/src /var"
 #SRCDIRS="/boot"
-NOBACKUPDIRS="/data /dev /home/data/nobackup /media /mnt /opt /proc /run /srv /sys /home/snapshots /tmp /var/run"
+NOBACKUPDIRS="/data /dev /home/data/nobackup /home/snapshots /media /mnt /opt /proc /run /srv /sys /tmp /var/crash /var/lock /var/metrics /var/run /var/tmp"
 DESTDIRS="/media/fk/6f99a555-c04a-4f2b-83cb-97a27de80f06/data/mlc05/backup"
+DESTDIRS="${DESTDIRS} /media/fk/86b1e19a-0617-424c-987b-7d46d545b41d/data/mlc05/backup"
 INFODIR="/root/logs/backup_infos"
-SNAPDIRS="/media/fk/6f99a555-c04a-4f2b-83cb-97a27de80f06"  # ${i}/data --> ${i}/snapshots/snap_YYYYMMDD_hhmmss
-                                                           # create subvolume ${i}/data first:
-                                                           #   btrfs subvolume create ${i}/data
+SNAPDIRS="/media/fk/6f99a555-c04a-4f2b-83cb-97a27de80f06"              # ${i}/data --> ${i}/snapshots/snap_YYYYMMDD_hhmmss
+SNAPDIRS="${SNAPDIRS} /media/fk/86b1e19a-0617-424c-987b-7d46d545b41d"  # create subvolume ${i}/data first:
+                                                                       #   btrfs subvolume create ${i}/data
 
- 
+
+
 
 # ===================================================================
 function checkIfDirsExist()
@@ -156,6 +158,10 @@ saveInfo
 
 echo "---------------------------------------------------------------------"
 showDiskfree
+echo "---------------------------------------------------------------------"
+
+echo "---------------------------------------------------------------------"
+sudo apt clean
 echo "---------------------------------------------------------------------"
 
 
