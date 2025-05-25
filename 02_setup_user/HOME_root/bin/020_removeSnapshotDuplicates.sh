@@ -3,6 +3,8 @@
 
 
 # Usage: ./020_removeSnapshotDuplicates.sh <mountpoint-of-btrfs-volume>
+# Example: ./020_removeSnapshotDuplicates.sh /mnt/tinyraid1/
+
 # Check if the directory is provided
 if [ -z "$1" ]; then
     echo "Usage: $0 <mountpoint-of-btrfs-volume>"
@@ -10,6 +12,11 @@ if [ -z "$1" ]; then
 fi
 # Mountpoint to check for duplicates
 MOUNTPOINT="$1"
+
+# remove trailing slash if it is not still root
+if [ "$MOUNTPOINT" != "/" ]; then
+    MOUNTPOINT="${MOUNTPOINT%/}"
+fi
 
 # Check if the mountpoint exists
 if [ ! -d "$MOUNTPOINT" ]; then
@@ -25,22 +32,38 @@ if [ -z "$SNAPSHOTS" ]; then
     exit 0
 fi
 
-#print number of snapshots
+# Print number of snapshots
 echo "Found $(echo "$SNAPSHOTS" | wc -l) snapshots in $MOUNTPOINT."
 
-# Print the list of snapshots
-echo "Snapshots:"
-echo "$SNAPSHOTS"
+# Sort the snapshots and store them in an array
+readarray -t SNAPSHOT_ARRAY < <(echo "$SNAPSHOTS" | sort)
 
-# iterate over the snapshots, sorted by date
-for SNAPSHOT in $(echo "$SNAPSHOTS" | sort ); do
-    # if it is the first snapshot, skip it
-    if [ "$SNAPSHOT" == "$(echo "$SNAPSHOTS" | head -n 1)" ]; then
-        continue
+# Check if there are at least 2 snapshots to compare
+if [ ${#SNAPSHOT_ARRAY[@]} -lt 2 ]; then
+    echo "Not enough snapshots to compare."
+    exit 0
+fi
+
+# Iterate over the sorted array, skipping the first snapshot
+# Start comparing from the second snapshot
+# and keep the first one as the previous snapshot
+PREVIOUS_SNAPSHOT="${SNAPSHOT_ARRAY[0]}"
+for ((i=1; i<${#SNAPSHOT_ARRAY[@]}; i++)); do
+    SNAPSHOT="${SNAPSHOT_ARRAY[$i]}"
+    echo -n "Checking $SNAPSHOT against $PREVIOUS_SNAPSHOT --->" 1>&2
+    
+    DIFF=$(diff -qr --exclude "snapshots" "$MOUNTPOINT/$SNAPSHOT" "$MOUNTPOINT/$PREVIOUS_SNAPSHOT")
+    
+    # Check if the diff is empty
+    if [ -z "$DIFF" ]; then 
+        # Remove the duplicate snapshot
+        echo " remove $SNAPSHOT"
+        btrfs subvolume delete "$MOUNTPOINT/$SNAPSHOT"
+    else
+        # keep the snapshot
+        echo "        keep $SNAPSHOT"
+        PREVIOUS_SNAPSHOT="$SNAPSHOT"
     fi
-    # Compare the current snapshot with the previous one
-    PREVIOUS_SNAPSHOT=$(echo "$SNAPSHOTS" | grep -B 1 "$SNAPSHOT" | head -n 1)
-    # Check if the current snapshot is a duplicate of the previous one
-    echo "Checking $SNAPSHOT against $PREVIOUS_SNAPSHOT" 1>&2    
+
 done
 
