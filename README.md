@@ -735,7 +735,7 @@ Change into folder [02_setup_user](02_setup_user) and execute files
 
 
 
-### Enable sound for su-users
+### Firefox: Enable sound for su-users
 Multi-User audio sharing works on Pipewire:  
 See: [How does Multi-User audio sharing work on Pipewire?](https://www.reddit.com/r/archlinux/comments/s3zn00/how_does_multiuser_audio_sharing_work_on_pipewire/?rdt=57318)  
 and: [Migrate PulseAudio --> `module-native-protocol-tcp`](https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Migrate-PulseAudio#module-native-protocol-tcp)
@@ -766,6 +766,25 @@ xhost si:localuser:$SU_USER && su $SU_USER sh -c "PULSE_SERVER='tcp:127.0.0.1:47
 ```
 It should start without asking for a password if above configurations were done correctly,  
 see section [Switch user account without password](#switch-user-account-without-password).
+
+
+
+### VLC: Enable sound for su-users
+```
+sudo vi /usr/local/bin/vlc-su
+```
+```
+#!/bin/bash
+export PULSE_SERVER=tcp:127.0.0.1:4713
+exec vlc "$@"
+```
+```
+sudo chmod +x /usr/local/bin/vlc-su
+```
+Last but not least:
+Configure Dolphin to open media files with your custom `vlc-su` script instead of the default VLC.  
+Right-click on any media file (e.g., .mp4, .mp3, etc.) and select: “Properties” --> “File Type”...  
+Open with `/usr/local/bin/vlc-su`
 
 
 ### Customize Visual Code (outdated)
