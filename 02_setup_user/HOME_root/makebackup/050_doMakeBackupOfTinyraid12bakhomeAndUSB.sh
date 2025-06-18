@@ -11,7 +11,8 @@ DESTDIRS=(
   "/media/fk/225393ec-cae0-433a-ac18-749dcfe9e980/data"
   "/media/fk/7e8a091f-01fa-428f-8c84-2924bfe71956/data"
   # USBHDDs
-  "/media/fk/069cab59-bb05-4c98-bcda-d45cff2b1ddd/data"
+  "/media/fk/069cab59-bb05-4c98-bcda-d45cff2b1ddd/data/mlc05/backup_tinyraid1"
+  "/media/fk/86b1e19a-0617-424c-987b-7d46d545b41d/data/mlc05/backup_tinyraid1"
 )
 
 
