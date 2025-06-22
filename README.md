@@ -1269,6 +1269,15 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
     ```
 
 
+- Helpfull oneliner:
+  - Replace space character in filenames  
+    `-n` for simulation  
+    `+` for efficiency: send several occurrences to `rename` (check `ARG_MAX` or use `\;` !!!)
+    ``` bash
+    find . -type f -name "* *" 2>/dev/null -exec rename -n 's/ /_/g' {} +
+    ```
+
+
 
 ### Infos
 - Access BIOS and boot menu
