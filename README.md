@@ -1006,6 +1006,9 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
       ```bash
       sudo apt install -y python3-pip python3-setuptools python3-pyqt5 libsecp256k1-dev python3-cryptography python3-setuptools python3-pip libusb-1.0-0-dev libudev-dev python3-venv autoconf automake libtool build-essential
       ```
+      ```bash
+      sudo apt-get install python3-pyqt6 libsecp256k1-dev python3-cryptography
+      ```
     - Create directory `electrum` and change into it
       ```bash
       mkdir electrum
@@ -1045,6 +1048,12 @@ Using [github's guide to generating SSH keys](https://docs.github.com/en/authent
       ```
       ```bash
       python3 -m pip install PyQt5
+      ```
+      ```bash
+      python3 -m pip install PyQt6
+      ```
+      ```bash
+      pip install --upgrade hwi
       ```
     - Install required python modules
       ```bash
