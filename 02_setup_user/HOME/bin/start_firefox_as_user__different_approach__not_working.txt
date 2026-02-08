@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 USERNAME" >&2
+  exit 1
+fi
+
+SU_USER=$1
+
+# One-time setup (run manually as root if needed): Add SU_USER to current user's group
+# sudo usermod -a -G $(id -gn) $SU_USER
+
+# Audio setup for PulseAudio
+pactl load-module module-native-protocol-tcp
+
+# Grant access to Wayland runtime dir and socket
+chmod 770 "$XDG_RUNTIME_DIR"
+chmod 770 "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
+
+# Run Firefox as SU_USER with preserved environment
+su $SU_USER -c "export XDG_RUNTIME_DIR='$XDG_RUNTIME_DIR' WAYLAND_DISPLAY='$WAYLAND_DISPLAY' PULSE_SERVER='tcp:127.0.0.1:4713' MOZ_ENABLE_WAYLAND=1; firefox"
+
+# Revoke access for security
+chmod 700 "$XDG_RUNTIME_DIR"
+chmod 700 "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"

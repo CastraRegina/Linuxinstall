@@ -72,7 +72,8 @@ export _SW2INSTALL="$_SW2INSTALL python3-pip-whl python3-setuptools-whl python3.
 export _SW2INSTALL="$_SW2INSTALL fontforge fontforge-common  libfontforge4 fontforge-doc fontforge-extras"
 export _SW2INSTALL="$_SW2INSTALL python3-fontforge fonts-cantarell fonts-inconsolata libuninameslist1 potrace"
 export _SW2INSTALL="$_SW2INSTALL poppler-utils ghostscript texlive-latex-extra texlive-extra-utils"
-export _SW2INSTALL="$_SW2INSTALL gegl mic gimp-gmic gimp-plugin-registry libtiff-tools"
+export _SW2INSTALL="$_SW2INSTALL gegl mic gimp-gmic gimp-plugin-registry libtiff-tools ripgrep trash-cli"
+export _SW2INSTALL="$_SW2INSTALL libhunspell-dev hunspell hunspell-de-de-frami hunspell-en-us"
 
 ### use libjpeg-turbo8-dev instead of libjpeg8-dev
 
