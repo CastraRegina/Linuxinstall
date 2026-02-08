@@ -178,7 +178,7 @@ for snap in "${SNAPSHOTS_SORTED[@]}"; do
         printf "[DELETE] %-30s (%s)\n" "$snap" "$rule"
 
         if $APPLY_MODE; then
-            echo btrfs subvolume delete "$path"
+            btrfs subvolume delete "$path"
         fi
     fi
 done
